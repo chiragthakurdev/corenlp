@@ -38,7 +38,7 @@ Previous releases can be found on [the release history page](history.html).
 **GitHub**: Here is the [Stanford CoreNLP GitHub site](https://github.com/stanfordnlp/CoreNLP).
 
 **Maven**: You can find Stanford CoreNLP on
-[Maven Central](http://search.maven.org/#browse%7C11864822). The
+[Maven Central](https://central.sonatype.com/artifact/edu.stanford.nlp/stanford-corenlp). The
 crucial thing to know is that CoreNLP needs its models to run (most
 parts beyond the tokenizer and sentence splitter) and so you need to specify both the code jar and the models jar in your `pom.xml`, as follows:
 (Note: Maven releases are usually made several days after a release on the website.)
