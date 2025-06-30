@@ -341,6 +341,9 @@ child.makeOptional();
         Token edgeName = null;
         SemgrexPattern node;
         boolean pC = false;
+        Token groupNum;
+        Token groupVar;
+        List<Pair<Integer,String>> varGroups = new ArrayList<Pair<Integer,String>>();
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case UNIQ:
     case RELATION:
@@ -385,16 +388,24 @@ child.makeOptional();
           jj_consume_token(-1);
           throw new ParseException();
         }
-        break;
+        label_5:
+        while (true) {
+          switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+          case EMPTY:{
+            ;
+            break;
+            }
+          default:
+            jj_la1[15] = jj_gen;
+            break label_5;
+          }
+          jj_consume_token(EMPTY);
+          groupNum = identifier();
+          jj_consume_token(22);
+          groupVar = identifier();
+// TODO: this should have been NUMBER, but that doesn't seem to exist
+                    varGroups.add(new Pair<Integer,String>(Integer.parseInt(groupNum.image),groupVar.image));
         }
-      default:
-        jj_la1[15] = jj_gen;
-        ;
-      }
-      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-      case 22:{
-        jj_consume_token(22);
-        name = identifier();
         break;
         }
       default:
@@ -404,11 +415,21 @@ child.makeOptional();
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case 23:{
         jj_consume_token(23);
-        edgeName = identifier();
+        name = identifier();
         break;
         }
       default:
         jj_la1[17] = jj_gen;
+        ;
+      }
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case 24:{
+        jj_consume_token(24);
+        edgeName = identifier();
+        break;
+        }
+      default:
+        jj_la1[18] = jj_gen;
         ;
       }
       break;
@@ -418,7 +439,7 @@ child.makeOptional();
       break;
       }
     default:
-      jj_la1[18] = jj_gen;
+      jj_la1[19] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -455,7 +476,7 @@ if (numArg == null && numArg2 == null) {
       break;
       }
     default:
-      jj_la1[19] = jj_gen;
+      jj_la1[20] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -468,7 +489,7 @@ if (numArg == null && numArg2 == null) {
     jj_consume_token(19);
     child = NodeConj(r);
 children.add(child);
-    label_5:
+    label_6:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case 15:{
@@ -476,8 +497,8 @@ children.add(child);
         break;
         }
       default:
-        jj_la1[20] = jj_gen;
-        break label_5;
+        jj_la1[21] = jj_gen;
+        break label_6;
       }
       jj_consume_token(15);
       child = NodeConj(r);
@@ -495,7 +516,7 @@ if (children.size() == 1)
         List<SemgrexPattern> children = new ArrayList<SemgrexPattern>();
     child = ModNode(r);
 children.add(child);
-    label_6:
+    label_7:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case 16:
@@ -506,8 +527,8 @@ children.add(child);
         break;
         }
       default:
-        jj_la1[21] = jj_gen;
-        break label_6;
+        jj_la1[22] = jj_gen;
+        break label_7;
       }
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case 16:{
@@ -515,7 +536,7 @@ children.add(child);
         break;
         }
       default:
-        jj_la1[22] = jj_gen;
+        jj_la1[23] = jj_gen;
         ;
       }
       child = ModNode(r);
@@ -545,7 +566,7 @@ underNodeNegation = startUnderNeg;
       break;
       }
     default:
-      jj_la1[23] = jj_gen;
+      jj_la1[24] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -564,7 +585,7 @@ underNodeNegation = startUnderNeg;
       break;
       }
     default:
-      jj_la1[24] = jj_gen;
+      jj_la1[25] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -586,18 +607,18 @@ underNodeNegation = startUnderNeg;
       attr = identifier();
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case 10:
-      case 24:{
+      case 25:{
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case 10:{
           attrType = jj_consume_token(10);
           break;
           }
-        case 24:{
-          attrType = jj_consume_token(24);
+        case 25:{
+          attrType = jj_consume_token(25);
           break;
           }
         default:
-          jj_la1[25] = jj_gen;
+          jj_la1[26] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -612,11 +633,11 @@ underNodeNegation = startUnderNeg;
           break;
           }
         default:
-          jj_la1[26] = jj_gen;
+          jj_la1[27] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
-        label_7:
+        label_8:
         while (true) {
           switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
           case EMPTY:{
@@ -624,12 +645,12 @@ underNodeNegation = startUnderNeg;
             break;
             }
           default:
-            jj_la1[27] = jj_gen;
-            break label_7;
+            jj_la1[28] = jj_gen;
+            break label_8;
           }
           jj_consume_token(EMPTY);
           groupNum = identifier();
-          jj_consume_token(25);
+          jj_consume_token(22);
           groupVar = identifier();
 // TODO: this should have been NUMBER, but that doesn't seem to exist
                 varGroups.add(new Pair<Integer,String>(Integer.parseInt(groupNum.image),groupVar.image));
@@ -653,7 +674,7 @@ if (attr != null && value != null) {
           break;
           }
         default:
-          jj_la1[28] = jj_gen;
+          jj_la1[29] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -662,12 +683,12 @@ if (attr != null && value != null) {
           attrType = jj_consume_token(10);
           break;
           }
-        case 24:{
-          attrType = jj_consume_token(24);
+        case 25:{
+          attrType = jj_consume_token(25);
           break;
           }
         default:
-          jj_la1[29] = jj_gen;
+          jj_la1[30] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -682,7 +703,7 @@ if (attr != null && value != null) {
           break;
           }
         default:
-          jj_la1[30] = jj_gen;
+          jj_la1[31] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -692,7 +713,7 @@ if (attr == null || key == null || value == null) {
              }
              negated = attrType.image.equals("!:");
              attributes.addContains(attr.image, key.image, value.image, negated);
-        label_8:
+        label_9:
         while (true) {
           switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
           case 27:{
@@ -700,8 +721,8 @@ if (attr == null || key == null || value == null) {
             break;
             }
           default:
-            jj_la1[31] = jj_gen;
-            break label_8;
+            jj_la1[32] = jj_gen;
+            break label_9;
           }
           jj_consume_token(27);
           switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -715,7 +736,7 @@ if (attr == null || key == null || value == null) {
             break;
             }
           default:
-            jj_la1[32] = jj_gen;
+            jj_la1[33] = jj_gen;
             jj_consume_token(-1);
             throw new ParseException();
           }
@@ -724,12 +745,12 @@ if (attr == null || key == null || value == null) {
             attrType = jj_consume_token(10);
             break;
             }
-          case 24:{
-            attrType = jj_consume_token(24);
+          case 25:{
+            attrType = jj_consume_token(25);
             break;
             }
           default:
-            jj_la1[33] = jj_gen;
+            jj_la1[34] = jj_gen;
             jj_consume_token(-1);
             throw new ParseException();
           }
@@ -744,7 +765,7 @@ if (attr == null || key == null || value == null) {
             break;
             }
           default:
-            jj_la1[34] = jj_gen;
+            jj_la1[35] = jj_gen;
             jj_consume_token(-1);
             throw new ParseException();
           }
@@ -759,7 +780,7 @@ if (attr == null || key == null || value == null) {
         break;
         }
       default:
-        jj_la1[35] = jj_gen;
+        jj_la1[36] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -776,7 +797,7 @@ attributes.setEmpty(true);
       break;
       }
     default:
-      jj_la1[36] = jj_gen;
+      jj_la1[37] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -793,7 +814,7 @@ attributes.setEmpty(true);
     case EMPTY:
     case ROOT:{
       AddAttribute(attributes);
-      label_9:
+      label_10:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case 27:{
@@ -801,8 +822,8 @@ attributes.setEmpty(true);
           break;
           }
         default:
-          jj_la1[37] = jj_gen;
-          break label_9;
+          jj_la1[38] = jj_gen;
+          break label_10;
         }
         jj_consume_token(27);
         AddAttribute(attributes);
@@ -810,13 +831,13 @@ attributes.setEmpty(true);
       break;
       }
     default:
-      jj_la1[38] = jj_gen;
+      jj_la1[39] = jj_gen;
       ;
     }
     jj_consume_token(28);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case 23:{
-      jj_consume_token(23);
+    case 24:{
+      jj_consume_token(24);
 link = true;
       name = identifier();
 String nodeName = name.image;
@@ -830,7 +851,7 @@ String nodeName = name.image;
       break;
       }
     default:
-      jj_la1[39] = jj_gen;
+      jj_la1[40] = jj_gen;
       ;
     }
 pat = new NodePattern(r, underNodeNegation, attributes, link, name != null ? name.image : null);
@@ -849,7 +870,7 @@ pat = new NodePattern(r, underNodeNegation, attributes, link, name != null ? nam
       break;
       }
     default:
-      jj_la1[40] = jj_gen;
+      jj_la1[41] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -866,13 +887,13 @@ pat = new NodePattern(r, underNodeNegation, attributes, link, name != null ? nam
   public Token jj_nt;
   private int jj_ntk;
   private int jj_gen;
-  final private int[] jj_la1 = new int[41];
+  final private int[] jj_la1 = new int[42];
   static private int[] jj_la1_0;
   static {
 	   jj_la1_init_0();
 	}
 	private static void jj_la1_init_0() {
-	   jj_la1_0 = new int[] {0x400,0x200a2010,0x24,0x800,0xe003c,0xe003c,0x200a2000,0x8000,0xf003c,0x10000,0xe003c,0x8003c,0x200000,0x24,0x224,0x224,0x400000,0x800000,0x3c,0x200a2000,0x8000,0x200b0000,0x10000,0x200a0000,0x20080000,0x1000400,0x224,0x80,0x224,0x1000400,0x224,0x8000000,0x224,0x1000400,0x224,0x5000400,0x1a4,0x8000000,0x1a4,0x800000,0x24,};
+	   jj_la1_0 = new int[] {0x400,0x200a2010,0x24,0x800,0xe003c,0xe003c,0x200a2000,0x8000,0xf003c,0x10000,0xe003c,0x8003c,0x200000,0x24,0x224,0x80,0x224,0x800000,0x1000000,0x3c,0x200a2000,0x8000,0x200b0000,0x10000,0x200a0000,0x20080000,0x2000400,0x224,0x80,0x224,0x2000400,0x224,0x8000000,0x224,0x2000400,0x224,0x6000400,0x1a4,0x8000000,0x1a4,0x1000000,0x24,};
 	}
 
   /** Constructor with InputStream. */
@@ -886,7 +907,7 @@ pat = new NodePattern(r, underNodeNegation, attributes, link, name != null ? nam
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 41; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 42; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -900,7 +921,7 @@ pat = new NodePattern(r, underNodeNegation, attributes, link, name != null ? nam
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 41; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 42; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -910,7 +931,7 @@ pat = new NodePattern(r, underNodeNegation, attributes, link, name != null ? nam
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 41; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 42; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -928,7 +949,7 @@ pat = new NodePattern(r, underNodeNegation, attributes, link, name != null ? nam
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 41; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 42; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -937,7 +958,7 @@ pat = new NodePattern(r, underNodeNegation, attributes, link, name != null ? nam
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 41; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 42; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -946,7 +967,7 @@ pat = new NodePattern(r, underNodeNegation, attributes, link, name != null ? nam
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 41; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 42; i++) jj_la1[i] = -1;
   }
 
   private Token jj_consume_token(int kind) throws ParseException {
@@ -1002,7 +1023,7 @@ pat = new NodePattern(r, underNodeNegation, attributes, link, name != null ? nam
 	   la1tokens[jj_kind] = true;
 	   jj_kind = -1;
 	 }
-	 for (int i = 0; i < 41; i++) {
+	 for (int i = 0; i < 42; i++) {
 	   if (jj_la1[i] == jj_gen) {
 		 for (int j = 0; j < 32; j++) {
 		   if ((jj_la1_0[i] & (1<<j)) != 0) {

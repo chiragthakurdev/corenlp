@@ -255,7 +255,7 @@ abstract class GraphRelation implements Serializable {
   // GOVERNOR graph relation: ">" ===============================================
 
   static private class GOVERNOR extends GraphRelation {
-    GOVERNOR(String reln, String name, String edgeName) {
+    GOVERNOR(String reln, String name, String edgeName, List<Pair<Integer,String>> varGroups) {
       super(">", reln, name, edgeName);
     }
 
@@ -1453,7 +1453,8 @@ abstract class GraphRelation implements Serializable {
   public static GraphRelation getRelation(String reln,
                                           String type,
                                           String name,
-                                          String edgeName) throws ParseException {
+                                          String edgeName,
+                                          List<Pair<Integer,String>> varGroups) throws ParseException {
     if (reln == null && type == null)
       return null;
     if (!isKnownRelation(reln)) {
@@ -1461,22 +1462,25 @@ abstract class GraphRelation implements Serializable {
     }
     switch (reln) {
       case ">":
-        return new GOVERNOR(type, name, edgeName);
+        return new GOVERNOR(type, name, edgeName, varGroups);
       case ">++":
-        return new GOVERNOR_RIGHT(type, name, edgeName);
+        return new GOVERNOR_RIGHT(type, name, edgeName, varGroups);
       case ">--":
-        return new GOVERNOR_LEFT(type, name, edgeName);
+        return new GOVERNOR_LEFT(type, name, edgeName, varGroups);
       case "<":
-        return new DEPENDENT(type, name, edgeName);
+        return new DEPENDENT(type, name, edgeName, varGroups);
       case "<++":
-        return new DEPENDENT_RIGHT(type, name, edgeName);
+        return new DEPENDENT_RIGHT(type, name, edgeName, varGroups);
       case "<--":
-        return new DEPENDENT_LEFT(type, name, edgeName);
+        return new DEPENDENT_LEFT(type, name, edgeName, varGroups);
       case "<>":
-        return new CONNECTED(type, name, edgeName);
+        return new CONNECTED(type, name, edgeName, varGroups);
     }
     if (edgeName != null) {
       throw new ParseException("Relation " + reln + " does not allow for named edges");
+    }
+    if (varGroups.size() != 0) {
+      throw new ParseException("Relation " + reln + " does not allow for capturing variable groups");
     }
     switch (reln) {
       case ">>":
