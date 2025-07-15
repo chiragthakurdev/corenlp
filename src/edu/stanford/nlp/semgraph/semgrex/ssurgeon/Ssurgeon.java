@@ -166,7 +166,9 @@ import edu.stanford.nlp.util.logging.Redwood;
  * {@code -node} is the node to split. <br>
  * {@code -headIndex} is the index (counting from 0) of the word piece to make the head. <br>
  * {@code -reln} is the name of the dependency type to use.  pieces other than the head will connect using this relation <br>
- * {@code -regex} regex must match the matched node.  all matching groups will be concatenated to form a new word.  need at least 2 to split a word
+ * {@code -regex} regex must match the matched node.  all matching groups will be concatenated to form a new word.  need at least 2 to split a word <br>
+ * {@code -exact} instead of specifying matching regex, can split to exact pieces.  need at least 2 to split a word <br>
+ * {@code -name} will give names to the newly created.  The format is #=name, comma separated
  *</p><p>
  * {@code setRoots} sets the roots of the sentence to a new root. <br>
  * {@code n1, n2, ...} are the names of the nodes from the Semgrex to use as the root(s). <br>
