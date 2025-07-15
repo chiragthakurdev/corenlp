@@ -682,6 +682,9 @@ public class Ssurgeon  {
         if (argsBox.regex.size() > 0 && argsBox.exact.size() > 0) {
           throw new SsurgeonParseException("Found both regex and exact in the splits for splitWord");
         }
+        if (argsBox.nodes.size() == 0) {
+          throw new SsurgeonParseException("splitWord not given any -node parameter for the node to split");
+        }
         if (argsBox.regex.size() > 0) {
           return new SplitWord(argsBox.nodes.get(0), argsBox.regex, argsBox.headIndex, reln, argsBox.name, false);
         } else {
