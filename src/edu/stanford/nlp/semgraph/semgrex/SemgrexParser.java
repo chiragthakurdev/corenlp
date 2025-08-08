@@ -447,7 +447,8 @@ if (numArg == null && numArg2 == null) {
             reln = GraphRelation.getRelation(rel != null ? rel.image : null,
                                              relnType != null ? relnType.image : null,
                                              name != null ? name.image : null,
-                                             edgeName != null ? edgeName.image : null);
+                                             edgeName != null ? edgeName.image : null,
+                                             varGroups);
           } else if (numArg2 == null) {
             reln = GraphRelation.getRelation(rel != null ? rel.image : null,
                                              relnType != null ? relnType.image : null,
