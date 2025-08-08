@@ -1019,7 +1019,7 @@ abstract class GraphRelation implements Serializable {
    */
   static private class CONNECTED extends GraphRelation {
     CONNECTED(String reln, String name, String edgeName) {
-      super("<>", reln, name);
+      super("<>", reln, name, edgeName);
     }
 
     @Override
