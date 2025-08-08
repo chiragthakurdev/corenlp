@@ -306,7 +306,7 @@ abstract class GraphRelation implements Serializable {
   };
 
   static private class GOVERNOR_RIGHT extends GraphRelation {
-    GOVERNOR_RIGHT(String reln, String name, String edgeName) {
+    GOVERNOR_RIGHT(String reln, String name, String edgeName, List<Pair<Integer,String>> varGroups) {
       super(">++", reln, name, edgeName);
     }
 
@@ -361,7 +361,7 @@ abstract class GraphRelation implements Serializable {
   }
 
   static private class GOVERNOR_LEFT extends GraphRelation {
-    GOVERNOR_LEFT(String reln, String name, String edgeName) {
+    GOVERNOR_LEFT(String reln, String name, String edgeName, List<Pair<Integer,String>> varGroups) {
       super(">--", reln, name, edgeName);
     }
 
@@ -418,7 +418,7 @@ abstract class GraphRelation implements Serializable {
   // DEPENDENT graph relation: "<" ===============================================
 
   static private class DEPENDENT extends GraphRelation {
-    DEPENDENT(String reln, String name, String edgeName) {
+    DEPENDENT(String reln, String name, String edgeName, List<Pair<Integer,String>> varGroups) {
       super("<", reln, name, edgeName);
     }
 
@@ -470,7 +470,7 @@ abstract class GraphRelation implements Serializable {
 
 
   static private class DEPENDENT_RIGHT extends GraphRelation {
-    DEPENDENT_RIGHT(String reln, String name, String edgeName) {
+    DEPENDENT_RIGHT(String reln, String name, String edgeName, List<Pair<Integer,String>> varGroups) {
       super("<++", reln, name, edgeName);
     }
 
@@ -527,7 +527,7 @@ abstract class GraphRelation implements Serializable {
 
 
   static private class DEPENDENT_LEFT extends GraphRelation {
-    DEPENDENT_LEFT(String reln, String name, String edgeName) {
+    DEPENDENT_LEFT(String reln, String name, String edgeName, List<Pair<Integer,String>> varGroups) {
       super("<--", reln, name, edgeName);
     }
 
@@ -1018,7 +1018,7 @@ abstract class GraphRelation implements Serializable {
    * In other words, this can take the place of a disjunction over &lt; and &gt;
    */
   static private class CONNECTED extends GraphRelation {
-    CONNECTED(String reln, String name, String edgeName) {
+    CONNECTED(String reln, String name, String edgeName, List<Pair<Integer,String>> varGroups) {
       super("<>", reln, name, edgeName);
     }
 
