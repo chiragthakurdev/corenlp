@@ -177,8 +177,7 @@ import edu.stanford.nlp.util.logging.Redwood;
  *</p><p>
  * {@code mergeNodes} will merge n1 and n2, assuming they are mergeable. <br>
  * The nodes can be merged if one of the nodes is the head of a phrase
- * and the other node depends on the head.  TODO: can make it process
- * more than two nodes at once.
+ * and the other node depends on the head.
  *</p><p>
  * {@code killAllIncomingEdges} deletes all edges to a node. <br>
  * {@code -node} is the node to edit. <br>
