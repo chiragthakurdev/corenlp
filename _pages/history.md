@@ -8,6 +8,8 @@ toc: false
 parent: Resources
 ---
 
+The earliest release of open-source software now comprising CoreNLP was the Stanford Parser on 5 December 2002. The first public release of a unified package tying together our varies NLP tools was on 1 November 2010.
+
 | Version | Date&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Changes | Models |
 | :--- | :----------------------------------- | :--- | :--- |
 | [4.5.10](https://nlp.stanford.edu/software/stanford-corenlp-4.5.10.zip) | 2025-06-06 |  Remove patterns and lucene, semgrex and ssurgeon features. |  [arabic](https://nlp.stanford.edu/software/stanford-corenlp-4.5.10-models-arabic.jar), [chinese](https://nlp.stanford.edu/software/stanford-corenlp-4.5.10-models-chinese.jar) , [english](https://nlp.stanford.edu/software/stanford-corenlp-4.5.10-models-english.jar) , [english (kbp)](https://nlp.stanford.edu/software/stanford-corenlp-4.5.10-models-english-kbp.jar), [french](https://nlp.stanford.edu/software/stanford-corenlp-4.5.10-models-french.jar) , [german](https://nlp.stanford.edu/software/stanford-corenlp-4.5.10-models-german.jar) , [hungarian](https://nlp.stanford.edu/software/stanford-corenlp-4.5.10-models-hungarian.jar) , [italian](https://nlp.stanford.edu/software/stanford-corenlp-4.5.10-models-italian.jar) , [spanish](https://nlp.stanford.edu/software/stanford-corenlp-4.5.10-models-spanish.jar) |
