@@ -133,7 +133,7 @@ public class Generics  {
 
   public static <E> Set<E> newHashSet() {
     try {
-      return ErasureUtils.uncheckedCast(HASH_SET_CLASS.newInstance());
+      return ErasureUtils.uncheckedCast(HASH_SET_CLASS.getDeclaredConstructor().newInstance());
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -198,7 +198,7 @@ public class Generics  {
   /* Maps */
   public static <K,V> Map<K,V> newHashMap() {
     try {
-      return ErasureUtils.uncheckedCast(HASH_MAP_CLASS.newInstance());
+      return ErasureUtils.uncheckedCast(HASH_MAP_CLASS.getDeclaredConstructor().newInstance());
     } catch (Exception e) {
       throw new RuntimeException(e);
     }

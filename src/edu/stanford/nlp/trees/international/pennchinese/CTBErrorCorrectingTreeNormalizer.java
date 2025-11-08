@@ -67,7 +67,7 @@ public class CTBErrorCorrectingTreeNormalizer extends BobChrisTreeNormalizer {
     this.splitXPTMP = splitXPTMP;
     if (charTags) {
       try {
-        tagExtender = (TreeTransformer) Class.forName("edu.stanford.nlp.trees.international.pennchinese.CharacterLevelTagExtender").newInstance();
+        tagExtender = (TreeTransformer) Class.forName("edu.stanford.nlp.trees.international.pennchinese.CharacterLevelTagExtender").getDeclaredConstructor().newInstance();
       } catch (Exception e) {
         throw new RuntimeException(e);
       }

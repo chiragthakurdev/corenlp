@@ -662,7 +662,7 @@ public class TreeBinarizer implements TreeTransformer  {
     while (i < args.length && args[i].startsWith("-")) {
       if (args[i].equalsIgnoreCase("-tlp") && i + 1 < args.length) {
 	try {
-	  tlp = (TreebankLanguagePack) Class.forName(args[i+1]).newInstance();
+	  tlp = (TreebankLanguagePack) Class.forName(args[i+1]).getDeclaredConstructor().newInstance();
 	} catch (Exception e) {
 	  log.info("Couldn't instantiate: " + args[i+1]);
           throw new RuntimeException(e);
@@ -670,7 +670,7 @@ public class TreeBinarizer implements TreeTransformer  {
 	i++;
       } else if (args[i].equalsIgnoreCase("-tlpp") && i + 1 < args.length) {
 	try {
-	  tlpp = (TreebankLangParserParams) Class.forName(args[i+1]).newInstance();
+	  tlpp = (TreebankLangParserParams) Class.forName(args[i+1]).getDeclaredConstructor().newInstance();
 	} catch (Exception e) {
 	  log.info("Couldn't instantiate: " + args[i+1]);
           throw new RuntimeException(e);

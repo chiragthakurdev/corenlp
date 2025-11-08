@@ -74,7 +74,7 @@ public class ColumnTabDocumentReaderWriter<IN extends CoreMap> implements Docume
 
     if (flags.tokenFactory != null) {
       try {
-        this.tokenFactory = (CoreTokenFactory<IN>) Class.forName(flags.tokenFactory).newInstance();
+        this.tokenFactory = (CoreTokenFactory<IN>) Class.forName(flags.tokenFactory).getDeclaredConstructor().newInstance();
       } catch (Exception e) {
         throw new RuntimeException(e);
       }
@@ -102,7 +102,7 @@ public class ColumnTabDocumentReaderWriter<IN extends CoreMap> implements Docume
     String tokenFactoryClassName =  props.getProperty(prefix + "tokenFactory");
     if (tokenFactoryClassName != null) {
       try {
-        this.tokenFactory = (CoreTokenFactory<IN>) Class.forName(tokenFactoryClassName).newInstance();
+        this.tokenFactory = (CoreTokenFactory<IN>) Class.forName(tokenFactoryClassName).getDeclaredConstructor().newInstance();
       } catch (Exception e) {
         throw new RuntimeException(e);
       }

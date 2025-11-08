@@ -232,8 +232,8 @@ public class GrammaticalStructureConversionUtils {
     DependencyReader altDepReader; // initialized below
     if (depReaderArgs.length == 0) {
       try {
-        altDepReader = altDepReaderClass.newInstance();
-      } catch (InstantiationException e) {
+        altDepReader = altDepReaderClass.getDeclaredConstructor().newInstance();
+      } catch (NoSuchMethodException | InstantiationException | InvocationTargetException e) {
         throw new RuntimeException(e);
       } catch (IllegalAccessException e) {
         log.info("No argument constructor to " + altDepReaderName + " is not public");
@@ -288,7 +288,7 @@ public class GrammaticalStructureConversionUtils {
     try {
       DependencyPrinter depPrinter;
       if (depPrintArgs.length == 0) {
-        depPrinter = altDepPrinterClass.newInstance();
+        depPrinter = altDepPrinterClass.getDeclaredConstructor().newInstance();
       } else {
         depPrinter = altDepPrinterClass.getConstructor(String[].class).newInstance((Object) depPrintArgs);
       }

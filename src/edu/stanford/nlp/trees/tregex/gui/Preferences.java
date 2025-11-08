@@ -132,8 +132,7 @@ public class Preferences {
     } else {//try to find the class
       try {
         Class<?> headfinder = Class.forName(headfinderName);
-        HeadFinder hf = (HeadFinder) headfinder.newInstance();
-        return hf;
+        return (HeadFinder) headfinder.getDeclaredConstructor().newInstance();
       } catch (Exception e) {
         return null;
       }
@@ -170,8 +169,7 @@ public class Preferences {
     } else {//try to find the class
       try {
         Class<?> trfClass = Class.forName(trfName);
-        TreeReaderFactory trf = (TreeReaderFactory) trfClass.newInstance();
-        return trf;
+        return (TreeReaderFactory) trfClass.getDeclaredConstructor().newInstance();
       } catch (Exception e) {
         return new PennTreeReaderFactory();
       }

@@ -1224,7 +1224,7 @@ public class CRFClassifier<IN extends CoreMap> extends AbstractSequenceClassifie
 
     CRFCliqueTree<? extends CharSequence> cliqueTree = getCliqueTree(documentDataAndLabels);
 
-    PriorModelFactory<IN> pmf = (PriorModelFactory<IN>) Class.forName(flags.priorModelFactory).newInstance();
+    PriorModelFactory<IN> pmf = (PriorModelFactory<IN>) Class.forName(flags.priorModelFactory).getDeclaredConstructor().newInstance();
     ListeningSequenceModel prior = pmf.getInstance(flags.backgroundSymbol, classIndex, tagIndex, newDocument, entityMatrices, flags);
 
     if ( ! flags.useUniformPrior) {
@@ -2235,7 +2235,7 @@ public class CRFClassifier<IN extends CoreMap> extends AbstractSequenceClassifie
     }
     featureFactories = Generics.newArrayList();
     for (int ff = 1; ff < featureFactoryName.length - 1; ++ff) {
-      FeatureFactory<IN> featureFactory = (FeatureFactory<IN>) Class.forName(featureFactoryName[1]).newInstance();
+      FeatureFactory<IN> featureFactory = (FeatureFactory<IN>) Class.forName(featureFactoryName[1]).getDeclaredConstructor().newInstance();
       featureFactory.init(flags);
       featureFactories.add(featureFactory);
     }

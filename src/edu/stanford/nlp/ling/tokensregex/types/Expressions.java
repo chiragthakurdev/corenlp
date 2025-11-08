@@ -1261,14 +1261,14 @@ public class Expressions  {
             // If so, then try to instantiate a new instance of the class
             if (TYPE_CLASS.equals(typeValue.getType())) {
               // Variable maps to a java class
-              Class c = (Class) typeValue.get();
+              Class<?> c = (Class<?>) typeValue.get();
               try {
-                Object obj = c.newInstance();
+                Object obj = c.getDeclaredConstructor().newInstance();
                 // for any field other than the "type", set the value of the field
                 //   of the created object to the specified value
                 for (String s:cv.value.keySet()) {
                   if (!"type".equals(s)) {
-                    Value v = cv.value.get(s).evaluate(env, args);
+                    Value<?> v = cv.value.get(s).evaluate(env, args);
                     try {
                       Field f = c.getField(s);
                       Object objVal =  toCompatibleObject(f, v.get());
@@ -1281,14 +1281,14 @@ public class Expressions  {
                   }
                 }
                 return new PrimitiveValue<>(typeName, obj);
-              } catch (InstantiationException | IllegalAccessException ex) {
+              } catch (ReflectiveOperationException ex) {
                 throw new RuntimeException("Cannot instantiate " + c, ex);
               }
             } else if (typeValue.get() != null){
               // When evaluated, variable does not explicitly map to "CLASS"
               // See if we can convert this CompositeValue into appropriate object
               // by calling "create(CompositeValue cv)"
-              Class c = typeValue.get().getClass();
+              Class<?> c = typeValue.get().getClass();
               try {
                 Method m = c.getMethod("create", CompositeValue.class);
                 CompositeValue evaluatedCv = cv.evaluateNoTypeConversion(env, args);

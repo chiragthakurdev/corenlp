@@ -118,15 +118,12 @@ public class FactoredParser  {
         i += 2;
       } else if (args[i].equalsIgnoreCase("-tLPP") && (i + 1 < args.length)) {
         try {
-          op.tlpParams = (TreebankLangParserParams) Class.forName(args[i + 1]).newInstance();
+          op.tlpParams = (TreebankLangParserParams) Class.forName(args[i + 1]).getDeclaredConstructor().newInstance();
         } catch (ClassNotFoundException e) {
           log.info("Class not found: " + args[i + 1]);
           throw new RuntimeException(e);
-        } catch (InstantiationException e) {
+        } catch (ReflectiveOperationException e) {
           log.info("Couldn't instantiate: " + args[i + 1] + ": " + e.toString());
-          throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-          log.info("illegal access" + e);
           throw new RuntimeException(e);
         }
         i += 2;

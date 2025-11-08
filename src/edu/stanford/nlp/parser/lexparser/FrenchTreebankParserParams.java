@@ -663,7 +663,7 @@ public class FrenchTreebankParserParams extends TregexPoweredTreebankParserParam
 
     } else if (args[i].equalsIgnoreCase("-headFinder") && (i + 1 < args.length)) {
       try {
-        HeadFinder hf = (HeadFinder) Class.forName(args[i + 1]).newInstance();
+        HeadFinder hf = (HeadFinder) Class.forName(args[i + 1]).getDeclaredConstructor().newInstance();
         setHeadFinder(hf);
         optionsString.append("HeadFinder: " + args[i + 1] + "\n");
 

@@ -70,15 +70,13 @@ public final class TreebankPreprocessor  {
       if(dsType == null)
         ds = new ATBArabicDataset();
       else {
-        Class c = ClassLoader.getSystemClassLoader().loadClass(dsType);
-        ds = (Dataset) c.newInstance();
+        Class<?> c = ClassLoader.getSystemClassLoader().loadClass(dsType);
+        ds = (Dataset) c.getDeclaredConstructor().newInstance();
       }
     } catch (ClassNotFoundException e) {
       System.err.printf("Dataset type %s does not exist%n", dsType);
-    } catch (InstantiationException e) {
+    } catch (ReflectiveOperationException e) {
       System.err.printf("Unable to instantiate dataset type %s%n", dsType);
-    } catch (IllegalAccessException e) {
-      System.err.printf("Unable to access dataset type %s%n", dsType);
     }
 
     return ds;

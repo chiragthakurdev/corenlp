@@ -28,7 +28,7 @@ import edu.stanford.nlp.util.Generics;
 public abstract class AbstractDataset implements Dataset  {
 
   /** A logger for this class */
-  private static Redwood.RedwoodChannels log = Redwood.channels(AbstractDataset.class);
+  private static final Redwood.RedwoodChannels log = Redwood.channels(AbstractDataset.class);
 
   protected final List<String> outputFileList;
   protected Mapper posMapper = null;
@@ -86,14 +86,14 @@ public abstract class AbstractDataset implements Dataset  {
   private Mapper loadMapper(String className) {
     Mapper m = null;
     try {
-      Class c = ClassLoader.getSystemClassLoader().loadClass(className);
-      m = (Mapper) c.newInstance();
+      Class<?> c = ClassLoader.getSystemClassLoader().loadClass(className);
+      m = (Mapper) c.getDeclaredConstructor().newInstance();
     } catch (ClassNotFoundException e) {
       System.err.printf("%s: Mapper type %s does not exist\n", this.getClass().getName(), className);
-    } catch (InstantiationException e) {
+    } catch (InstantiationException | NoSuchMethodException e) {
       System.err.printf("%s: Unable to instantiate mapper type %s\n", this.getClass().getName(), className);
       e.printStackTrace();
-    } catch (IllegalAccessException e) {
+    } catch (ReflectiveOperationException e) {
       System.err.printf("%s: Unable to access mapper type %s\n", this.getClass().getName(), className);
     }
 
@@ -156,7 +156,7 @@ public abstract class AbstractDataset implements Dataset  {
       else if(param.equals(ConfigParser.paramMorph))
         morphDelim = value;
       else if(param.equals(ConfigParser.paramTransform))
-        customTreeVisitor = loadTreeVistor(value);
+        customTreeVisitor = loadTreeVisitor(value);
     }
 
     if(!configuredOptions.containsAll(requiredOptions))
@@ -180,13 +180,13 @@ public abstract class AbstractDataset implements Dataset  {
     return true;
   }
 
-  private static TreeVisitor loadTreeVistor(String value) {
+  private static TreeVisitor loadTreeVisitor(String value) {
     try {
-      Class c = ClassLoader.getSystemClassLoader().loadClass(value);
+      Class<?> c = ClassLoader.getSystemClassLoader().loadClass(value);
 
-      return (TreeVisitor) c.newInstance();
+      return (TreeVisitor) c.getDeclaredConstructor().newInstance();
 
-    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+    } catch (ReflectiveOperationException e) {
       e.printStackTrace();
     }
 

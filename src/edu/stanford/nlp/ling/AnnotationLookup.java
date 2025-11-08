@@ -112,7 +112,7 @@ public class AnnotationLookup {
     /**
      * This constructor allows us to use reflection for loading old class keys.
      * This is useful because we can then create distributions that do not have
-     * all of the classes required for all the old keys (such as trees package classes).
+     * all the classes required for all the old keys (such as trees package classes).
      */
     @SuppressWarnings("unused")
     KeyLookup(String className, String oldKey) {
@@ -155,16 +155,15 @@ public class AnnotationLookup {
    * @param key The annotation key (non-null)
    * @return The type of the value of that key (non-null)
    */
-  @SuppressWarnings("unchecked")
-  public static Class<?> getValueType(Class<? extends CoreAnnotation<?>> key) {
-    Class type = valueCache.get(key);
+   public static Class<?> getValueType(Class<? extends CoreAnnotation<?>> key) {
+    Class<?> type = valueCache.get(key);
     if (type == null) {
       try {
-        type = key.newInstance().getType();
-      } catch (Exception e) {
+        type = key.getDeclaredConstructor().newInstance().getType();
+      } catch (ReflectiveOperationException e) {
         throw new UnsupportedOperationException("Unexpected failure to instantiate - is your key class fancy?", e);
       }
-      valueCache.put((Class)key, type);
+      valueCache.put(key, type);
     }
     return type;
   }

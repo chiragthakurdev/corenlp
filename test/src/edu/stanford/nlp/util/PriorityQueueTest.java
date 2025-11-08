@@ -21,7 +21,7 @@ public class PriorityQueueTest extends TestCase {
   private static void runBasicTests(String className) {
     PriorityQueue<String> queue;
     try {
-      queue = ErasureUtils.uncheckedCast(Class.forName(className).newInstance());
+      queue = ErasureUtils.uncheckedCast(Class.forName(className).getDeclaredConstructor().newInstance());
     } catch (Exception e) {
       fail(e.toString());
       return;
@@ -48,7 +48,7 @@ public class PriorityQueueTest extends TestCase {
   private static void runRelaxingTests(String className) {
     BinaryHeapPriorityQueue<String> queue;
     try {
-      queue = ErasureUtils.uncheckedCast(Class.forName(className).newInstance());
+      queue = ErasureUtils.uncheckedCast(Class.forName(className).getDeclaredConstructor().newInstance());
     } catch (Exception e) {
       fail(e.toString());
       return;
@@ -80,7 +80,7 @@ public class PriorityQueueTest extends TestCase {
   private static void runNotRelaxingTests(String className) {
     FixedPrioritiesPriorityQueue<String> pq;
     try {
-      pq = ErasureUtils.uncheckedCast(Class.forName(className).newInstance());
+      pq = ErasureUtils.uncheckedCast(Class.forName(className).getDeclaredConstructor().newInstance());
     } catch (Exception e) {
       fail(e.toString());
       return;

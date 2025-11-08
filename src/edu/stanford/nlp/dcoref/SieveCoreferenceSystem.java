@@ -371,7 +371,7 @@ public class SieveCoreferenceSystem  {
           }
           mentionFinder = (CorefMentionFinder) Class.forName(mentionFinderClass).getConstructor(Properties.class).newInstance(mentionFinderProps);
         } else {
-          mentionFinder = (CorefMentionFinder) Class.forName(mentionFinderClass).newInstance();
+          mentionFinder = (CorefMentionFinder) Class.forName(mentionFinderClass).getDeclaredConstructor().newInstance();
         }
         mentionExtractor.setMentionFinder(mentionFinder);
       }
