@@ -63,7 +63,7 @@ private static ParserPack loadParserPack(String parser, ServletContext applicati
   // load parser
   ParserPack pp = new ParserPack();
   pp.escaper = (Function<List<HasWord>, List<HasWord>>)
-     Class.forName(nameToEscaper.get(parser)).newInstance();
+     Class.forName(nameToEscaper.get(parser)).getDeclaredConstructor().newInstance();
   pp.parser = LexicalizedParser.loadModel(serializedParserPath);
   pp.tLP = pp.parser.getOp().tlpParams.treebankLanguagePack();
   pp.tagPrint = new TreePrint("wordsAndTags", pp.tLP);
