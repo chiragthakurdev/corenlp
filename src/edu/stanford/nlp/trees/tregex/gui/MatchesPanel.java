@@ -51,10 +51,10 @@ import edu.stanford.nlp.util.Pair;
 @SuppressWarnings("serial")
 public class MatchesPanel extends JPanel implements ListSelectionListener {
   private static MatchesPanel instance = null;
-  private JList<TreeFromFile> list;
+  private final JList<TreeFromFile> list;
   // todo: Change the below to just be a List<List<Tree>> paralleling list above
   private Map<TreeFromFile,List<Tree>> matchedParts;
-  private List<MatchesPanelListener> listeners;
+  private final List<MatchesPanelListener> listeners;
   private Color highlightColor = Color.CYAN;
   private boolean showOnlyMatchedPortion = false;
   private JTextField lastSelected = null;
@@ -171,7 +171,7 @@ public class MatchesPanel extends JPanel implements ListSelectionListener {
     listeners = new ArrayList<>();
     //layout
     this.setLayout(new BorderLayout());
-    this.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),"Matches: "));
+    this.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),"Matches"));
     JScrollPane scroller = new JScrollPane(list);
     this.add(scroller, BorderLayout.CENTER);
   }

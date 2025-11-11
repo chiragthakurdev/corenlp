@@ -28,17 +28,9 @@
 //    Licensing: parser-support@lists.stanford.edu
 //    http://www-nlp.stanford.edu/software/tregex.shtml
 
-package edu.stanford.nlp.trees.tregex.gui; 
-import edu.stanford.nlp.util.logging.Redwood;
+package edu.stanford.nlp.trees.tregex.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.KeyboardFocusManager;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -52,8 +44,8 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.Method;
 import java.util.*;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -66,19 +58,24 @@ import edu.stanford.nlp.trees.tregex.gui.MatchesPanel.MatchesPanelListener;
 import edu.stanford.nlp.trees.tregex.tsurgeon.Tsurgeon;
 import edu.stanford.nlp.util.Generics;
 import edu.stanford.nlp.util.ReflectionLoading;
+import edu.stanford.nlp.util.logging.Redwood;
+
 
 /**
  * Main class for creating a tregex gui.  Manages the components and holds the menu bar.
  * A tregex gui (Interactive Tregex) allows users to perform tregex searches in a gui interface
  * and view the results of those searches.  Search results may be saved.
+ * (This was initially written to target the old pre-Java 8 macOS (OS X) Java interface, but has
+ * now been written to use the Java 11+ Desktop class and associated properties.
  *
  * @author Anna Rafferty
+ * @author Christopher Manning
  */
 @SuppressWarnings("serial")
 public class TregexGUI extends JFrame implements ActionListener, MatchesPanelListener  {
 
   /** A logger for this class */
-  private static Redwood.RedwoodChannels log = Redwood.channels(TregexGUI.class);
+  private static final Redwood.RedwoodChannels log = Redwood.channels(TregexGUI.class);
 
   private static TregexGUI instance; // = null;
 
@@ -101,13 +98,14 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
   //file choosing components for loading trees
   private JFileChooser chooser; // = null;
 
-  final TreeTransformer transformer;
+  final TreeTransformer transformer; // used in FileTreeModel
 
   //preferences, about panel so that we don't have to remake each time
   private PreferencesPanel preferenceDialog; // = null;
   private JDialog aboutBox; // = null;
 
   private static final String TRANSFORMER = "transformer";
+
 
   private JMenuBar getMenu() {
     JMenuBar mbar = new JMenuBar();
@@ -141,8 +139,7 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
     file.add(saveMatches);
     file.add(saveSentences);
     file.add(saveHistory);
-    if ( ! isMacOSX()) {
-      file.addSeparator();
+    if ( ! isMacOS()) {
       file.addSeparator();
       file.add(quit);
     }
@@ -179,7 +176,7 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
     tDiff.addActionListener(this);
 
     JMenu tools = new JMenu("Tools");
-    if ( ! isMacOSX()) {
+    if ( ! isMacOS()) {
       tools.add(preferences);
     }
     tools.add(tDiff);
@@ -189,15 +186,16 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
     mbar.add(search);
     mbar.add(tools);
 
-    setShortcutKeys(); //sets for appropriate operating system
+    setShortcutKeys(); // sets for appropriate operating system
 
     loadPreferences();
 
     return mbar;
   }
 
+
   private void setShortcutKeys() {
-    if (isMacOSX()) {
+    if (isMacOS()) {
       setMacShortcutKeys();
     } else {
       setWindowsShortcutKeys();
@@ -205,45 +203,43 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
   }
 
   private void setMacShortcutKeys() {
-    preferences.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, InputEvent.META_MASK));
-    loadFiles.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.META_MASK));
-    saveMatches.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.META_MASK));
-    saveHistory.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.SHIFT_MASK+InputEvent.META_MASK));
-    quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.META_MASK));
-    copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.META_MASK));
+    preferences.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, InputEvent.META_DOWN_MASK));
+    loadFiles.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.META_DOWN_MASK));
+    saveMatches.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.META_DOWN_MASK));
+    saveHistory.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.SHIFT_DOWN_MASK+InputEvent.META_DOWN_MASK));
+    quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.META_DOWN_MASK));
+    copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.META_DOWN_MASK));
 
-    searchMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.META_MASK));
-    prevMatch.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.META_MASK));
-    nextMatch.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.META_MASK));
-    prevTreeMatch.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.SHIFT_MASK | InputEvent.META_DOWN_MASK));
-    nextTreeMatch.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.SHIFT_MASK | InputEvent.META_MASK));
-
+    searchMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.META_DOWN_MASK));
+    prevMatch.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.META_DOWN_MASK));
+    nextMatch.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.META_DOWN_MASK));
+    prevTreeMatch.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.SHIFT_DOWN_MASK | InputEvent.META_DOWN_MASK));
+    nextTreeMatch.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.SHIFT_DOWN_MASK | InputEvent.META_DOWN_MASK));
   }
 
   private void setWindowsShortcutKeys() {
     // preferences.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, Event.CTRL_MASK)); // cdm: just skip this, I don't think Windows ever uses comma like this
-    loadFiles.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
-    saveMatches.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
-    saveHistory.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.SHIFT_MASK+InputEvent.CTRL_MASK));
-    quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK)); // cdm: maybe should be Control or Alt F4
-    copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK));
+    loadFiles.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
+    saveMatches.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
+    saveHistory.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.SHIFT_DOWN_MASK+InputEvent.CTRL_DOWN_MASK));
+    quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_DOWN_MASK)); // cdm: maybe should be Control or Alt F4
+    copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
 
-    searchMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_MASK));
-    prevMatch.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK));
-    nextMatch.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_MASK));
-    prevTreeMatch.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK));
-    nextTreeMatch.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK));
-
+    searchMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK));
+    prevMatch.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_DOWN_MASK));
+    nextMatch.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_DOWN_MASK));
+    prevTreeMatch.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK));
+    nextTreeMatch.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK));
   }
+
 
   private void initAboutBox() {
     aboutBox = new JDialog(this, "About Tregex");
     aboutBox.getContentPane().setLayout(new BorderLayout());
-    aboutBox.getContentPane().add(new JLabel("<html><b>Tregex and Tsurgeon</b></html>", SwingConstants.CENTER), BorderLayout.NORTH);
+    aboutBox.getContentPane().add(new JLabel("<html><h1>Tregex and Tsurgeon</h1></html>", SwingConstants.CENTER), BorderLayout.NORTH);
 
-    aboutBox.getContentPane().add(new JLabel("<html>Tregex by Galen Andrew and Roger Levy<br>Tsurgeon by Roger Levy<br>Graphical interface by Anna Rafferty<br>Additional features and development by Chris Manning<br></html>", SwingConstants.CENTER), BorderLayout.CENTER);
-    aboutBox.getContentPane().add(new JLabel("<html><font size=2>\u00A92007 The Board of Trustees of The Leland Stanford Junior University.<br>Distributed under the GNU General Public License</font></html>", SwingConstants.CENTER), BorderLayout.SOUTH);
-
+    aboutBox.getContentPane().add(new JLabel("<html><p>Tregex by Galen Andrew and Roger Levy<br>Tsurgeon by Roger Levy<br>Graphical interface by Anna Rafferty<br>Additional features and development by Chris Manning</p></html>", SwingConstants.CENTER), BorderLayout.CENTER);
+    aboutBox.getContentPane().add(new JLabel("<html><p><font size=2>© 2007, 2025 The Board of Trustees of The Leland Stanford Junior University.<br>Distributed under the GNU General Public License</font></p></html>", SwingConstants.CENTER), BorderLayout.SOUTH);
   }
 
   /**
@@ -251,7 +247,7 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
    * whether any trees are available to save.
    */
   public void setSaveEnabled(boolean enabled) {
-    if(saveMatches.isEnabled() != enabled) {
+    if (saveMatches.isEnabled() != enabled) {
       saveMatches.setEnabled(enabled);
       saveSentences.setEnabled(enabled);
     }
@@ -262,8 +258,9 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
    * whether any search statistics are available to save
    */
   public void setSaveHistoryEnabled(boolean enabled) {
-    if(saveHistory.isEnabled() != enabled)
+    if (saveHistory.isEnabled() != enabled) {
       saveHistory.setEnabled(enabled);
+    }
   }
 
   /**
@@ -271,18 +268,22 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
    * whether tsurgeon is enabled
    */
   public void setTsurgeonEnabled(boolean enabled) {
-    if (loadTsurgeon.isEnabled() != enabled)
+    if (loadTsurgeon.isEnabled() != enabled) {
       loadTsurgeon.setEnabled(enabled);
+    }
   }
 
   private static void setMacProperties() {
-    System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Tregex");
     System.setProperty("apple.laf.useScreenMenuBar", "true");
-
+    System.setProperty( "apple.awt.application.name", "TregexGUI" );
+    System.setProperty("apple.awt.textantialiasing", "true");
+    System.setProperty( "apple.awt.application.appearance", "system" );
   }
 
-  public static boolean isMacOSX() {
-    return System.getProperty("os.name").toLowerCase().startsWith("mac os x");
+
+  /** This method duplicates the test done in jdk.internal.org.jline.utils.OSUtils */
+  public static boolean isMacOS() {
+    return System.getProperty("os.name").toLowerCase().startsWith("mac");
   }
 
   public static TregexGUI getInstance() {
@@ -306,6 +307,8 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
     return fullTopPanel;
   }
 
+
+  /** Constructor */
   private TregexGUI(Properties props, List<String> initialFiles) {
     super("Tregex");
     TregexGUI.instance = this;
@@ -320,6 +323,19 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
     }
 
     initAboutBox();
+
+    if (Desktop.isDesktopSupported()) {
+      // Application Menu (About and Preferences)
+      Desktop desk = Desktop.getDesktop();
+      if (desk.isSupported(Desktop.Action.APP_ABOUT)) {
+        desk.setAboutHandler(e -> about());
+      }
+      if (desk.isSupported(Desktop.Action.APP_PREFERENCES)) {
+        desk.setPreferencesHandler(e -> doPreferences());
+      }
+    }
+
+
     Container content = getContentPane();
     content.setBackground(Color.lightGray);
     // NB: The menu has to exist before you can successfully create an input.  Bad side effect dependency!
@@ -328,15 +344,13 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
     JSplitPane inputAndMatchesPanel = setUpTopPanels();
     MatchesPanel.getInstance().addListener(this);
     this.setFocusTraversalKeysEnabled(true);
-    macOSXRegistration();
+
     // stick it all together now
     setJMenuBar(mbar);
     content.setLayout(new BorderLayout());
     JSplitPane verticalSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, inputAndMatchesPanel, displayMatchesPanel);
     verticalSplit.setResizeWeight(.2);
     this.add(verticalSplit, BorderLayout.CENTER);
-
-
 
     // make size
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -353,7 +367,7 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
     setBounds(begX, begY, screenSize.width, screenSize.height);
     pack();
 
-    if (initialFiles.size() > 0) {
+    if ( ! initialFiles.isEmpty()) {
       File[] files = new File[initialFiles.size()];
       for (int i = 0; i < initialFiles.size(); ++i) {
         files[i] = new File(initialFiles.get(i));
@@ -364,43 +378,7 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
     setVisible(true);
   }
 
-  // Generic registration with the Mac OS X application menu.  Checks the platform, then attempts
-  // to register with the Apple EAWT.
-  // This is based heavily on the Apple sample code for dealing with this issue
-  private void macOSXRegistration() {
-    if (isMacOSX()) {
-      try {
-        Class<?> osxAdapter = ClassLoader.getSystemClassLoader().loadClass("edu.stanford.nlp.trees.tregex.gui.OSXAdapter");
-
-        Class<?>[] defArgs = {TregexGUI.class};
-        Method registerMethod = osxAdapter.getDeclaredMethod("registerMacOSXApplication", defArgs);
-        if (registerMethod != null) {
-          Object[] args = { this };
-          registerMethod.invoke(osxAdapter, args);
-        }
-        defArgs[0] = boolean.class;
-        Method prefsEnableMethod =  osxAdapter.getDeclaredMethod("enablePrefs", defArgs);
-        if (prefsEnableMethod != null) {
-          Object[] args = {Boolean.TRUE};
-          prefsEnableMethod.invoke(osxAdapter, args);
-        }
-      } catch (NoClassDefFoundError e) {
-        // This will be thrown first if the OSXAdapter is loaded on a system without the EAWT
-        // because OSXAdapter extends ApplicationAdapter in its def
-        log.info("This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" + e + ")");
-      } catch (ClassNotFoundException e) {
-        // This shouldn't be reached; if there's a problem with the OSXAdapter we should get the
-        // above NoClassDefFoundError first.
-        log.info("This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" + e + ")");
-      } catch (Exception e) {
-        log.info("Exception while loading the OSXAdapter:");
-        e.printStackTrace();
-      }
-    }
-  }
-
-
-
+  
   //Creates a new JFileChooser, doing the boilerplate
   // to start it in the current directory.
   private static JFileChooser createFileChooser() {
@@ -451,15 +429,16 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
     String hfName = hf.getClass().getSimpleName();
     String trfName = trf.getClass().getSimpleName();
     String encoding = Preferences.getEncoding();
-    if(encoding != null && !encoding.equals(""))
+    if (encoding != null && !encoding.isEmpty())
       FileTreeModel.setCurEncoding(encoding);
     if (PreferencesPanel.isChinese(hfName, trfName))
       setChineseFont();
     else if (PreferencesPanel.isArabic(hfName, trfName))
       setArabicFont();
 
-    if (preferenceDialog == null)
+    if (preferenceDialog == null) {
       preferenceDialog = new PreferencesPanel(this);
+    }
     preferenceDialog.checkEncodingAndDisplay(hfName, trfName);
   }
 
@@ -475,7 +454,7 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
           fontName = "Watanabe Mincho";
         }
 
-        if(!fontName.equals("")) {
+        if ( ! fontName.isEmpty()) {
           DisplayMatchesPanel.getInstance().setFontName(fontName);
           MatchesPanel.getInstance().setFontName(fontName);
         }
@@ -485,26 +464,23 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
   }
 
   private static void setArabicFont() {
-    Thread t = new Thread() {
-      @Override
-      public void run() {
-        List<Font> fonts = FontDetector.supportedFonts(FontDetector.ARABIC);
-        String fontName = "";
-        if (fonts.size() > 0) {
-          fontName = fonts.get(0).getName();
-        }
-        if(!fontName.equals("")) {
-          DisplayMatchesPanel.getInstance().setFontName(fontName);
-          MatchesPanel.getInstance().setFontName(fontName);
-        }
+    Thread t = new Thread(() -> {
+      List<Font> fonts = FontDetector.supportedFonts(FontDetector.ARABIC);
+      String fontName = "";
+      if ( ! fonts.isEmpty()) {
+        fontName = fonts.get(0).getName();
       }
-    };
+      if ( ! fontName.isEmpty()) {
+        DisplayMatchesPanel.getInstance().setFontName(fontName);
+        MatchesPanel.getInstance().setFontName(fontName);
+      }
+    });
     t.start();
   }
 
   /*
    * Method for bringing up the load file dialog box and conveying
-   * the chosen files to the filepanel
+   * the chosen files to the JFilePanel.
    */
   private void doLoadFiles() {
     if (chooser == null) {
@@ -532,6 +508,7 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
     }
   }
 
+  
   public static class TransferActionListener implements ActionListener, PropertyChangeListener {
 
     private JComponent focusOwner; // = null;
@@ -573,13 +550,7 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
     final File[] cFiles = files;
     final JPanel fileFilterPanel = new JPanel();
     fileFilterPanel.setLayout(new BoxLayout(fileFilterPanel, BoxLayout.PAGE_AXIS));
-    JLabel text = new JLabel("<html>Please indicate any constraints on the files you want to load. All files in specified folders that satisfy all of the given constraints will be loaded. Just press Okay to load all files.</html>");
-    //text.setBorder(BorderFactory.createLineBorder(Color.black));
-    text.setAlignmentX(SwingConstants.LEADING);
-    JPanel textPanel = new JPanel(new BorderLayout());
-    textPanel.setPreferredSize(new Dimension(100,50));
-    //textPanel.setBorder(BorderFactory.createLineBorder(Color.black));
-    textPanel.add(text);
+    JPanel textPanel = makeConstraintsJPanel();
     fileFilterPanel.add(textPanel);
     fileFilterPanel.add(Box.createVerticalStrut(5));
     Box defaultFilter = getNewFilter();
@@ -589,13 +560,13 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
     final JOptionPane fileFilterDialog = new JOptionPane();
     fileFilterDialog.setMessage(fileFilterPanel);
     JButton[] options = new JButton[3];
-    JButton okay = new JButton("Okay");
+    JButton okay = new JButton("OK");
 
     JButton add = new JButton("Add another filter");
     JButton cancel = new JButton("Cancel");
-    options[0] = okay;
+    options[0] = cancel;
     options[1] = add;
-    options[2] = cancel;
+    options[2] = okay;
 
     fileFilterDialog.setOptions(options);
 
@@ -626,6 +597,17 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
     dialog.setVisible(true);
   }
 
+  private static JPanel makeConstraintsJPanel() {
+    JLabel text = new JLabel("<html>Please indicate any constraints on the files you want to load. All files in specified folders that satisfy all of the given constraints will be loaded. Just press OK to load all files.</html>");
+    //text.setBorder(BorderFactory.createLineBorder(Color.black));
+    text.setAlignmentX(SwingConstants.LEADING);
+    JPanel textPanel = new JPanel(new BorderLayout());
+    textPanel.setPreferredSize(new Dimension(100,50));
+    //textPanel.setBorder(BorderFactory.createLineBorder(Color.black));
+    textPanel.add(text);
+    return textPanel;
+  }
+
   private void startFileLoadingThread(final EnumMap<FilterType,String> filters, final File[] cFiles) {
     Thread t = new Thread() {
       @Override
@@ -635,7 +617,6 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
       }
     };
     t.start();
-
   }
 
   private static EnumMap<FilterType,String> getFilters(JPanel panel) {
@@ -667,7 +648,7 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
     return filter;
   }
 
-   public enum FilterType {
+  public enum FilterType {
     none("None"),
     hasExtension("Has extension: "),
     hasPrefix("Has prefix: "),
@@ -785,7 +766,7 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
             final String tsurgeonOperationsString = Tsurgeon.getTsurgeonTextFromReader(reader);
             SwingUtilities.invokeLater(() -> InputPanel.getInstance().setScriptAndPattern(tregexPatternString, tsurgeonOperationsString));
           } catch (IOException e) {
-            System.out.println("Error parsing Tsurgeon file");
+            log.err("Error parsing Tsurgeon file");
             //e.printStackTrace();
           }
         }
@@ -884,15 +865,15 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
    * All other arguments will be interpreted as filenames to preload.
    */
   public static void main(String[] args) {
-    if (isMacOSX()) {
-      setMacProperties();
-    } else {
-      try {
-        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-      } catch (Exception e) {
-        throw new RuntimeException(e);
+    try {
+      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+      if (isMacOS()) {
+        setMacProperties();
       }
+      } catch (Exception e) {
+      throw new RuntimeException(e);
     }
+
     Properties props = new Properties();
     List<String> filenames = Generics.newArrayList();
     for (int argIndex = 0; argIndex < args.length; ) {
@@ -903,15 +884,128 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
         filenames.add(args[argIndex++]);
       }
     }
-    new TregexGUI(props, filenames);
+
+    SwingUtilities.invokeLater(() -> {
+      new TregexGUI(props, filenames);
+    });
   }
 
 
   public void about() {
-    aboutBox.setSize(360, 240);
-    aboutBox.setLocation((int)this.getLocation().getX() + 22, (int)this.getLocation().getY() + 22);
+    aboutBox.setSize(400, 240);
+    aboutBox.setLocation((int)this.getLocation().getX() + 30, (int)this.getLocation().getY() + 30);
     aboutBox.setResizable(false);
     aboutBox.setVisible(true);
   }
 
-}
+} // end TregexGUI
+
+// NOTES
+//
+// java -Xdock:name= <applicationName> -Xdock:icon= <iconPath> -jar <jar file path>
+//
+// In 2025, Mac has Settings not Preferences any more!
+//         Menu systemMenu = Display.getDefault().getSystemMenu();
+//
+//
+//  javapackager (JDK 8) / jpackage (JDK 14 and later): These are the official tools included with the Java Development Kit (JDK) for creating native application packages. They can produce platform-specific installers (e.g., DMG/PKG for macOS, MSI/EXE for Windows, RPM/DEB for Linux) that include a bundled Java Runtime Environment (JRE). This ensures users have the correct Java version without needing a pre-installed JRE.
+//
+//  Code
+//
+//    # Example using jpackage (for creating a macOS DMG)
+// jpackage --name "MyJavaApp" \
+//        --input "path/to/your/jar" \
+//        --main-jar "yourApp.jar" \
+//        --main-class "com.example.YourMainClass" \
+//        --type dmg \
+//        --dest "output/directory"
+//
+// Alternative: Launch4j Executable Wrapper Files
+//
+// Fairly up to date: https://gist.github.com/wiverson/5308a91fcb41a59a0b802e7953891ed9
+//
+//   "apple.awt.showGrowBox"
+// "apple.awt.antialiasing"
+// "swing.aatext"
+//    "apple.awt.brushMetalLook",
+// "apple.awt.graphics.EnableQ2DX"
+//
+//   public static void writeTextToClipboard(String s) {
+//     Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+//     Transferable transferable = new StringSelection(s);
+//     clipboard.setContents(transferable, null);
+// }
+//
+ //
+ //     System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Tregex"); // not any more. Deprecated, use: apple.awt.application.name
+//
+ //       System.setProperty("apple.awt.application.icon", "/u/manning/git/CoreNLP/doc/tregex/nlp-logo-6x6.icns"); // Deprecated in 2025; use jpackage
+//
+//         desk.setPreferencesHandler(e -> JOptionPane.showMessageDialog(this, "Preferences for My Java App"));
+//
+    /*
+SwingUtilities.invokeLater(new Runnable() {
+    public void run() {
+        createAndShowGUI();
+    }
+});
+
+If you need to determine whether your code is running on the event dispatch thread, invoke javax.swing.SwingUtilities.isEventDispatchThread.
+
+When a Swing program needs to execute a long-running task, it usually uses one of the worker threads, also known as the background threads. Each task running on a worker thread is represented by an instance of javax.swing.SwingWorker. SwingWorker itself is an abstract class; you must define a subclass in order to create a SwingWorker object; anonymous inner classes are often useful for creating very simple SwingWorker objects.
+
+SwingWorker provides a number of communication and control features:
+
+The SwingWorker subclass can define a method, done, which is automatically invoked on the event dispatch thread when the background task is finished.
+SwingWorker implements java.util.concurrent.Future. This interface allows the background task to provide a return value to the other thread. Other methods in this interface allow cancellation of the background task and discovering whether the background task has finished or been cancelled.
+The background task can provide intermediate results by invoking SwingWorker.publish, causing SwingWorker.process to be invoked from the event dispatch thread.
+The background task can define bound properties. Changes to these properties trigger events, causing event-handling methods to be invoked on the event dispatch thread.
+
+Here is the code that defines and executes the SwingWorker object.
+
+SwingWorker worker = new SwingWorker<ImageIcon[], Void>() {
+    @Override
+    public ImageIcon[] doInBackground() {
+        final ImageIcon[] innerImgs = new ImageIcon[nimgs];
+        for (int i = 0; i < nimgs; i++) {
+            innerImgs[i] = loadImage(i+1);
+        }
+        return innerImgs;
+    }
+
+    @Override
+    public void done() {
+        //Remove the "Loading images" label.
+        animator.removeAll();
+        loopslot = -1;
+        try {
+            imgs = get();
+        } catch (InterruptedException ignore) {}
+        catch (java.util.concurrent.ExecutionException e) {
+            String why = null;
+            Throwable cause = e.getCause();
+            if (cause != null) {
+                why = cause.getMessage();
+            } else {
+                why = e.getMessage();
+            }
+            System.err.println("Error retrieving file: " + why);
+        }
+    }
+};
+
+
+        SwingUtilities.invokeLater( () -> {
+        FlatLightLaf.setup();
+
+        // create and show UI
+    } );
+    if( SystemInfo.isMacFullWindowContentSupported )
+    frame.getRootPane().putClientProperty( "apple.awt.transparentTitleBar", true );
+    // For merging content into title bar ... complex
+    if( SystemInfo.isMacFullWindowContentSupported ) {
+    frame.getRootPane().putClientProperty( "apple.awt.fullWindowContent", true );
+    frame.getRootPane().putClientProperty( "apple.awt.transparentTitleBar", true );
+    frame.getRootPane().putClientProperty( "apple.awt.windowTitleVisible", false );
+    frame.getRootPane().putClientProperty( "apple.awt.fullscreenable", true );
+     */

@@ -55,7 +55,7 @@ public class FilePanel extends JPanel {
 
   private static final long serialVersionUID = -2229250395240163264L;
   private static FilePanel filePanel = null;
-  private JTree tree;
+  private final JTree tree;
   private FileTreeModel treeModel;
 
   public static synchronized FilePanel getInstance() {
@@ -91,7 +91,7 @@ public class FilePanel extends JPanel {
 
     //layout/panel stuff
     this.setLayout(new BorderLayout());
-    this.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),"Tree files: "));
+    this.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),"Tree files"));
     JScrollPane scroller = new JScrollPane(tree);
     this.add(scroller, BorderLayout.CENTER);
   }

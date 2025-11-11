@@ -74,13 +74,13 @@ public class PreferencesPanel extends JDialog {
   private static final String HISTORY_ERROR = "history";//error code if history size is not an int >0
   private static final String MAX_MATCH_ERROR = "maxMatch";//error code if history size is not an int >0
 
-  private TregexGUI gui;
+  private final TregexGUI gui;
 
   final JButton highlightButton;
-  private JTextField setEncoding;//declared here because may change in different places
+  private final JTextField setEncoding;//declared here because may change in different places
 
   public PreferencesPanel(TregexGUI gui) {
-    super(gui, "Preferences");
+    super(gui, TregexGUI.isMacOS() ? "Settings": "Preferences");
 
     this.gui = gui;
 
@@ -121,7 +121,7 @@ public class PreferencesPanel extends JDialog {
     JPanel treeDisplayOptions = new JPanel();
     treeDisplayOptions.setLayout(new GridLayout(4,2));
     JLabel fontName = new JLabel("Font: ");
-    final JComboBox fontPicker = new JComboBox(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
+    final JComboBox<String> fontPicker = new JComboBox<>(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
     fontPicker.setSelectedItem(Preferences.getFont());
 
     JLabel sizeLabel = new JLabel("Font size: ");
@@ -154,12 +154,12 @@ public class PreferencesPanel extends JDialog {
     advOptions.setBorder(BorderFactory.createTitledBorder("Advanced "));
     advOptions.setLayout(new GridLayout(3,2,0,4));
     JLabel headfinderName = new JLabel("Head finder:");
-    final JComboBox headfinderPicker = new JComboBox(new String[] {"ArabicHeadFinder", "BikelChineseHeadFinder", "ChineseHeadFinder", "ChineseSemanticHeadFinder", "CollinsHeadFinder", "DybroFrenchHeadFinder", "LeftHeadFinder", "ModCollinsHeadFinder", "NegraHeadFinder", "SemanticHeadFinder", "SunJurafskyChineseHeadFinder", "TueBaDZHeadFinder", "UniversalSemanticHeadFinder"}); //
+    final JComboBox<String> headfinderPicker = new JComboBox<>(new String[] {"ArabicHeadFinder", "BikelChineseHeadFinder", "ChineseHeadFinder", "ChineseSemanticHeadFinder", "CollinsHeadFinder", "DybroFrenchHeadFinder", "LeftHeadFinder", "ModCollinsHeadFinder", "NegraHeadFinder", "SemanticHeadFinder", "SunJurafskyChineseHeadFinder", "TueBaDZHeadFinder", "UniversalSemanticHeadFinder"}); //
     headfinderPicker.setEditable(true);
     headfinderPicker.setSelectedItem(Preferences.getHeadFinder()
                                      .getClass().getSimpleName());
     JLabel treeReaderFactoryName = new JLabel("Tree reader factory:");
-    final JComboBox trfPicker = new JComboBox(new String[] {"ArabicTreeReaderFactory", "ArabicTreeReaderFactory.ArabicRawTreeReaderFactory", "CTBTreeReaderFactory", "Basic categories only (LabeledScoredTreeReaderFactory)", "FrenchTreeReaderFactory","NoEmptiesCTBTreeReaderFactory", "PennTreeReaderFactory", "TregexTreeReaderFactory" });
+    final JComboBox<String> trfPicker = new JComboBox<>(new String[] {"ArabicTreeReaderFactory", "ArabicTreeReaderFactory.ArabicRawTreeReaderFactory", "CTBTreeReaderFactory", "Basic categories only (LabeledScoredTreeReaderFactory)", "FrenchTreeReaderFactory","NoEmptiesCTBTreeReaderFactory", "PennTreeReaderFactory", "TregexTreeReaderFactory" });
     trfPicker.setEditable(true);
     trfPicker.setSelectedItem(Preferences.getTreeReaderFactory()
                               .getClass().getSimpleName());
@@ -248,7 +248,7 @@ public class PreferencesPanel extends JDialog {
             JOptionPane.showMessageDialog(prefPanel, "Please enter an integer greater than 0 for the font size.", "Font size error", JOptionPane.ERROR_MESSAGE);
           else if (e.getMessage() == PreferencesPanel.HISTORY_ERROR)
             JOptionPane.showMessageDialog(prefPanel, "Please enter an integer greater than or equal to 0 for the number of recent matches to remember.", "History size error", JOptionPane.ERROR_MESSAGE);
-          else if (e.getMessage() == PreferencesPanel.HISTORY_ERROR)
+          else if (e.getMessage() == PreferencesPanel.MAX_MATCH_ERROR)
             JOptionPane.showMessageDialog(prefPanel, "Please enter an integer greater than or equal to 0 for the maximum number of matches to display.", "Max Matches size error", JOptionPane.ERROR_MESSAGE);
           else
             JOptionPane.showMessageDialog(prefPanel, "Please check that the font size, max matches to display, and number of recent matches to remember are all integers greater than 0.", "Size error", JOptionPane.ERROR_MESSAGE);
@@ -267,7 +267,7 @@ public class PreferencesPanel extends JDialog {
   private static Integer checkNumberFormat(JTextField component, String errorType) throws NumberFormatException {
     Integer number = null;
     String txt = component.getText();
-    if(txt!= null && !"".equals(txt)) {
+    if (txt!= null && ! txt.isEmpty()) {
       try {
         number = Integer.parseInt(txt);
         if(number <= 0)
@@ -360,8 +360,6 @@ public class PreferencesPanel extends JDialog {
     final JDialog dialog = fileFilterDialog.createDialog(null, "Default encoding changed...");
     useNewEncoding.addActionListener(arg0 -> {
       FileTreeModel.setCurEncoding(encoding);
-      if(setEncoding == null)
-        System.out.println("encoding null!!");
       setEncoding.setText(encoding);
       dialog.setVisible(false);
     });

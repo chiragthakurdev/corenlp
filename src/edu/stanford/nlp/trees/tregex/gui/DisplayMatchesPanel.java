@@ -70,7 +70,7 @@ import edu.stanford.nlp.util.Pair;
 @SuppressWarnings("serial")
 public class DisplayMatchesPanel extends JPanel implements ListSelectionListener {
 
-  private JScrollPane scroller;
+  private final JScrollPane scroller;
   private MouseEvent firstMouseEvent = null;
 
   private String fontName = "";
@@ -102,7 +102,7 @@ public class DisplayMatchesPanel extends JPanel implements ListSelectionListener
     scroller = new JScrollPane(spaceholder);
 
     // Fix slow scrolling on OS X
-    if (TregexGUI.isMacOSX()) {
+    if (TregexGUI.isMacOS()) {
       scroller.getVerticalScrollBar().setUnitIncrement(3);
       scroller.getHorizontalScrollBar().setUnitIncrement(3);
     }
@@ -186,10 +186,10 @@ public class DisplayMatchesPanel extends JPanel implements ListSelectionListener
         firstMouseEvent = e;
       }
       e.consume();
-      if(((e.getModifiersEx()) & InputEvent.SHIFT_DOWN_MASK) == InputEvent.SHIFT_DOWN_MASK) {
+      if (((e.getModifiersEx()) & InputEvent.SHIFT_DOWN_MASK) == InputEvent.SHIFT_DOWN_MASK) {
         //shift is being held
         addHighlight(textField, firstMouseEvent, e);
-      } else if(!HighlightUtils.isInHighlight(e, textField, textField.getHighlighter())) {
+      } else if (!HighlightUtils.isInHighlight(e, textField, textField.getHighlighter())) {
         textField.getHighlighter().removeAllHighlights();
         firstMouseEvent = e;
         dragNDrop = false;
@@ -360,8 +360,9 @@ public class DisplayMatchesPanel extends JPanel implements ListSelectionListener
     copy.setActionCommand((String) TransferHandler.getCopyAction()
                           .getValue(Action.NAME));
     copy.addActionListener(new TregexGUI.TransferActionListener());
-    int mask = TregexGUI.isMacOSX() ? InputEvent.META_MASK : InputEvent.CTRL_MASK;
+    int mask = TregexGUI.isMacOS() ? InputEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK;
     copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, mask));
+
     treePopup.add(copy);
 
     JMenuItem exportTree = new JMenuItem("Export tree as image");

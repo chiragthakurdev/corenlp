@@ -175,32 +175,6 @@ LAST UPDATE: 2020/10/17
 LAST UPDATE BY: Christopher Manning
 
 ----------------------------------------------------------------------
-AppleJavaExtensions.jar
-
-ORIGINAL JAR NAME: AppleJavaExtensions.jar
-
-VERSION: 1.3
-
-RELEASE DATE: 2006-10-17
-
-SOURCE AVAILABLE: no
-
-DESCRIPTION: Stub methods to allow programs that can use Mac graphical
-stuff load on non-macs.  Should only be on compile classpath, not actually
-used at run time (Macs actually have the classes in this jar, and should load
-by reflection; see TregexGUI for an example).
-
-URL: http://developer.apple.com/samplecode/AppleJavaExtensions/index.html
-
-USED BY: TregexGUI.java
-Not needed by CoreNLP distributions
-(Only used for fake compilation -- at runtime, either Mac supplies this or it doesn't.)
-
-LAST UPDATE: 2007/09/18
-
-LAST UPDATE BY: Anna Rafferty.
-
------------------------------------------------------------------------
 xom-1.3.9.jar
 
 ORIGINAL JAR NAME: xom-1.3.9.jar

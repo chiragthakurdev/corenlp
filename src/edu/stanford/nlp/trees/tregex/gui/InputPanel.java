@@ -119,7 +119,7 @@ public class InputPanel extends JPanel implements ActionListener, ChangeListener
 
     //layout/image stuff
     this.setLayout(new GridBagLayout());
-    this.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),"Search pattern: "));
+    this.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),"Search pattern"));
 
     //pattern/history area
     JPanel tregexInput = makeTregexPatternArea();
