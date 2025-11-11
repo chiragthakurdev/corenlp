@@ -261,9 +261,9 @@ public class DisplayMatchesPanel extends JPanel implements ListSelectionListener
   }
 
   void showPrevMatchedPart() {
-    if (matchedPartCoordinates.size() == 0)
+    if (matchedPartCoordinates == null || matchedPartCoordinates.size() == 0) {
       return;
-    else if (matchedPartCoordinateIdx <= 0)
+    } else if (matchedPartCoordinateIdx <= 0)
       matchedPartCoordinateIdx = matchedPartCoordinates.size();
 
     matchedPartCoordinateIdx--;
@@ -271,11 +271,10 @@ public class DisplayMatchesPanel extends JPanel implements ListSelectionListener
   }
 
   void showNextMatchedPart() {
-    if (matchedPartCoordinates.size() == 0)
+    if (matchedPartCoordinates == null || matchedPartCoordinates.size() == 0) {
       return;
-
-    matchedPartCoordinateIdx =
-      ++matchedPartCoordinateIdx % matchedPartCoordinates.size();
+    }
+    matchedPartCoordinateIdx = ++matchedPartCoordinateIdx % matchedPartCoordinates.size();
     showMatchedPart(matchedPartCoordinateIdx);
   }
 

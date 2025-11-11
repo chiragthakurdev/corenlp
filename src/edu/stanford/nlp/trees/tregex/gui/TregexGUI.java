@@ -545,8 +545,6 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
   }
 
   private void doFileFilters(File[] files) {
-    //System.out.println("Doing file filters");
-
     final File[] cFiles = files;
     final JPanel fileFilterPanel = new JPanel();
     fileFilterPanel.setLayout(new BoxLayout(fileFilterPanel, BoxLayout.PAGE_AXIS));
@@ -560,26 +558,27 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
     final JOptionPane fileFilterDialog = new JOptionPane();
     fileFilterDialog.setMessage(fileFilterPanel);
     JButton[] options = new JButton[3];
+
+    JButton cancel = new JButton("Cancel");
+    JButton add = new JButton("Add another filter");
     JButton okay = new JButton("OK");
 
-    JButton add = new JButton("Add another filter");
-    JButton cancel = new JButton("Cancel");
-    options[0] = cancel;
+    options[0] = okay;
     options[1] = add;
-    options[2] = okay;
+    options[2] = cancel;
 
     fileFilterDialog.setOptions(options);
 
-    final JDialog dialog = fileFilterDialog.createDialog(null, "Set file filters...");
+    final JDialog dialog = fileFilterDialog.createDialog(null, "Set file filters");
     okay.addActionListener(arg0 -> {
       // first check if we have a file range option and make sure it's valid
       final EnumMap<FilterType,String> filters = getFilters(fileFilterPanel);
       if (filters.containsKey(FilterType.isInRange)) {
         try {
-          // if we can creat it, then it's not invalid!
+          // if we can create it, then it's not invalid!
           new NumberRangesFileFilter(filters.get(FilterType.isInRange), false);
-        } catch(Exception e) {
-          JOptionPane.showMessageDialog(dialog, new JLabel("<html>Please check the range you specified for the file number.  Ranges must be numerical, and disjoint <br>ranges should be separated by commas.  For example \"1-200,250-375\" is a valid range.</html>"), "Error in File Number Range", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+          JOptionPane.showMessageDialog(dialog, new JLabel("<html>Please check the range you specified for the file numbers.  Ranges must be numerical, and disjoint <br>ranges should be separated by commas.  For example \"1-200,250-375\" is a valid range.</html>"), "Error in File Number Range", JOptionPane.ERROR_MESSAGE);
           return;
         }
       }
@@ -756,7 +755,7 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
     if (chooser == null)
       chooser = createFileChooser();
     int status = chooser.showOpenDialog(this);
-    if(status == JFileChooser.APPROVE_OPTION) {
+    if (status == JFileChooser.APPROVE_OPTION) {
       Thread t = new Thread() {
         @Override
         public void run() {
@@ -794,9 +793,9 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
     ((JCheckBoxMenuItem) tDiff).setState(doTdiff);
 
     // Only allow 2 active treebanks
-    if(doTdiff) {
+    if (doTdiff) {
       List<FileTreeNode> activeTreebanks = FilePanel.getInstance().getActiveTreebanks();
-      for(int i = 2; i < activeTreebanks.size(); i++)
+      for (int i = 2; i < activeTreebanks.size(); i++)
         activeTreebanks.get(i).setActive(false);
     }
   }
@@ -845,7 +844,6 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
   public static void doQuit() {
     System.exit(0);
   }
-
 
 
   /**

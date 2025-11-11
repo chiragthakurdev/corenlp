@@ -130,10 +130,14 @@ public class TregexPatternCompiler {
    * @throws TregexParseException If the expression is syntactically invalid
    */
   public TregexPattern compile(String tregex) {
+    if (tregex == null || tregex.isEmpty()) {
+      throw new TregexParseException("Empty Tregex expression", null);
+    }
     for (Pair<String, String> macro : macros) {
       tregex = tregex.replaceAll(macro.first(), macro.second());
     }
     TregexPattern pattern;
+
     try {
       TregexParser parser = new TregexParser(new StringReader(tregex + '\n'),
                                              basicCatFunction, headFinder);

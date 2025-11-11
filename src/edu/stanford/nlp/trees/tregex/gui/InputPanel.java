@@ -29,7 +29,6 @@
 //http://www-nlp.stanford.edu/software/tregex.shtml
 
 package edu.stanford.nlp.trees.tregex.gui; 
-import edu.stanford.nlp.util.logging.Redwood;
 
 import java.awt.Color;
 import java.awt.ComponentOrientation;
@@ -61,18 +60,19 @@ import edu.stanford.nlp.trees.tregex.TregexPatternCompiler;
 import edu.stanford.nlp.trees.tregex.tsurgeon.Tsurgeon;
 import edu.stanford.nlp.trees.tregex.tsurgeon.TsurgeonPattern;
 import edu.stanford.nlp.util.Generics;
+import edu.stanford.nlp.util.logging.Redwood;
 
 
 /**
  * Class representing the panel that gets input from the user and does (in a thread-safe manner)
- * the computation for finding tree matches and performing tsurgeon operations.  Also displays statistics.
+ * the computation for finding tree matches and performing Tsurgeon operations.  Also displays statistics.
  *
  * @author Anna Rafferty
  */
 public class InputPanel extends JPanel implements ActionListener, ChangeListener  {
 
   /** A logger for this class */
-  private static Redwood.RedwoodChannels log = Redwood.channels(InputPanel.class);
+  private static final Redwood.RedwoodChannels log = Redwood.channels(InputPanel.class);
 
   private static final long serialVersionUID = -8219840036914495876L;
 
@@ -88,7 +88,7 @@ public class InputPanel extends JPanel implements ActionListener, ChangeListener
   private int numRecentPatterns = 5;// we save the last n patterns in our combo box, where n = numRecentPatterns
   private JTextArea tsurgeonScript;
   private TregexPatternCompiler compiler;//this should change only when someone changes the headfinder/basic category finder
-  private List<HistoryEntry> historyList;
+  private final List<HistoryEntry> historyList;
   private JFrame historyFrame; // = null;
   private JLabel scriptLabel;
   private boolean tsurgeonEnabled; // = false;
@@ -547,7 +547,7 @@ public class InputPanel extends JPanel implements ActionListener, ChangeListener
     Object recent = recentTregexPatternsModel.getSelectedItem();
     if (recent != null) {
       String selected = recent.toString();
-      if (selected.length() != 0) {
+      if ( ! selected.isEmpty()) {
         tregexPattern.setText(selected);
       }
     }
@@ -696,9 +696,11 @@ public class InputPanel extends JPanel implements ActionListener, ChangeListener
   }
 
   private void returnToValidState(final String pattern, final TRegexGUITreeVisitor visitor, final List<TreeFromFile> trees) {
+    assert trees != null;
     SwingUtilities.invokeLater(() -> {
       int numUniqueMatches = 0;
-      if (trees.size() > 0) {
+
+      if ( ! trees.isEmpty()) {
         numUniqueMatches = visitor.numUniqueMatches();
       }
       updateFoundStats(pattern, trees.size(), numUniqueMatches);
@@ -791,7 +793,7 @@ public class InputPanel extends JPanel implements ActionListener, ChangeListener
    */
   public void doError(final String txt, final Throwable e) {
     SwingUtilities.invokeLater(() -> {
-      String extraData = e.getLocalizedMessage() != null ? e.getLocalizedMessage(): (e.getClass() != null) ? e.getClass().toString(): "";
+      String extraData = e.getLocalizedMessage() != null ? e.getLocalizedMessage(): e.getClass().toString();
       JOptionPane.showMessageDialog(InputPanel.this, txt + '\n' + extraData, "Tregex Error", JOptionPane.ERROR_MESSAGE);
       e.printStackTrace(); // send to stderr for debugging
       useProgressBar(false);
@@ -840,8 +842,7 @@ public class InputPanel extends JPanel implements ActionListener, ChangeListener
     }
 
     public static String[] columnNamesArray() {
-      String[] names = {"Pattern","Trees Matched", "Total Matches"};
-      return names;
+      return new String[]{"Pattern","Trees Matched", "Total Matches"};
     }
 
     @Override
@@ -931,7 +932,7 @@ public class InputPanel extends JPanel implements ActionListener, ChangeListener
     if (helpFrame != null) {
       helpFrame.setVisible(true);
     } else {
-      helpFrame = new JFrame("Tregex Help...");
+      helpFrame = new JFrame("Tregex Help");
       //JPanel helpPanel = new JPanel();
       JEditorPane helpText = new JEditorPane();
       helpText.setContentType("text/html");
@@ -956,7 +957,7 @@ public class InputPanel extends JPanel implements ActionListener, ChangeListener
     if(tsurgeonHelpFrame != null) {
       tsurgeonHelpFrame.setVisible(true);
     } else {
-      tsurgeonHelpFrame = new JFrame("TSurgeon Help...");
+      tsurgeonHelpFrame = new JFrame("TSurgeon Help");
       JEditorPane helpText = new JEditorPane();
       helpText.setContentType("text/html");
       // StringBuilder s = new StringBuilder();

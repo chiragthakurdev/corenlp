@@ -6,7 +6,7 @@
   <property name="module.jdk.bin.core" value="${project.jdk.bin}"/>
   <property name="module.jdk.classpath.core" value="${project.jdk.classpath}"/>
   
-  <property name="compiler.args.core" value="-encoding UTF-8 -source 8 ${compiler.args}"/>
+  <property name="compiler.args.core" value="-encoding UTF-8 -source 11 ${compiler.args}"/>
   
   <property name="core.output.dir" value="${module.core.basedir}/../action_parsing/out/production/core"/>
   <property name="core.testoutput.dir" value="${module.core.basedir}/../action_parsing/out/test/core"/>

@@ -194,13 +194,11 @@ public class PreferencesPanel extends JDialog {
     prefPanel.add(matchPortion,c);
 
     JButton[] options = new JButton[2];
-    JButton okay = new JButton("Okay");
-
-
+    JButton okay = new JButton("OK");
     JButton cancel = new JButton("Cancel");
 
-    options[1] = cancel;
     options[0] = okay;
+    options[1] = cancel;
 
 
     final JOptionPane prefPane = new JOptionPane();
@@ -379,7 +377,7 @@ public class PreferencesPanel extends JDialog {
    * Prompts the user to enter a new encoding for loading tree files
    */
   private void alternateEncodingPrompt(String newDefaultEncoding) {
-    String response = (String) JOptionPane.showInputDialog(this,"Please enter a text encoding: ", "Set Encoding...",
+    String response = (String) JOptionPane.showInputDialog(this,"Please enter a text encoding: ", "Set Encoding",
         JOptionPane.QUESTION_MESSAGE,null,null,newDefaultEncoding);
     FileTreeModel.setCurEncoding(response.trim());
     setEncoding.setText(response.trim());
