@@ -119,19 +119,20 @@ LAST UPDATE: 2011-11-21
 LAST UPDATE BY: John Bauer
 
 -----------------------------------------------------------------------
-commons-lang3-3.1.jar
-ORIGINAL JAR NAME: commons-lang3-3.1.jar
-VERSION:
-RELEASE DATE: 11-14-2011
+commons-lang3-3.19.0.jar
+ORIGINAL JAR NAME: commons-lang3-3.19.0.jar
+VERSION: 3.19.0
+RELEASE DATE: 2025-09-19
 SOURCE AVAILABLE: yes
 DESCRIPTION: has XML escaping & unescaping methods, amongst other stuff; changes from 2.5 - no escapeHtml function.
-URL: http://commons.apache.org/lang/
+URL: https://commons.apache.org/proper/commons-lang/
 
-USED BY: edu.stanford.nlp.kbp and web servlets.
+USED BY: Only by a few web servlets in (NER, SUTime, CoreNLP) for string escaping.
 Not needed by CoreNLP distributions.  In core, used only by web apps (jsp pages and NERServlet).
+We should probably either use it more for (un)escaping or dump it.
 
-LAST UPDATE: 2013-06-05
-LAST UPDATE BY: Sonal Gupta
+LAST UPDATE: 2025-11-11
+LAST UPDATE BY: Christopher Manning
 
 -----------------------------------------------------------------------
 commons-logging.jar
@@ -140,7 +141,7 @@ ORIGINAL JAR NAME: commons-logging.jar
 VERSION: 1.2
 RELEASE DATE: July 2014
 SOURCE AVAILABLE: yes
-DESCRIPTION: "The Logging package is an ultri-thin bridge between different
+DESCRIPTION: "The Logging package is an ultra-thin bridge between different
 logging implementations.  A library that uses the commons-logging API can be
 used with any logging implementation at runtime.
 URL: http://jakarta.apache.org/commons/logging
