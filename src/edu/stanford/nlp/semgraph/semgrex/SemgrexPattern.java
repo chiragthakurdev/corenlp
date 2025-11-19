@@ -229,6 +229,20 @@ import edu.stanford.nlp.util.logging.Redwood;
  * This is only legal on relations with only one link between the two endpoints.
  * Other relations (such as grandparent) will throw a parse exception.
  *
+ * <h3>Variable Groups</h3>
+ *
+ * If you write a node description using a regular expression, you can
+ * assign its matching groups to variable names. If more than one node
+ * has a group assigned to the same variable name, then matching will
+ * only occur when all such groups capture the same string. This is
+ * useful for enforcing coindexation constraints. The syntax is
+ *
+ * {@code / <regex-stuff> /#<group-number>%<variable-name> }
+ *
+ * For example, a pattern which looks for the same word occurring twice in a row is
+ *
+ * {@code {word:__#1%w} . {word:__#1%w}}
+ *
  * <h3>TODO</h3>
  * At present a Semgrex pattern will match only once at a root node, even if there is more than one way of satisfying
  * it under the root node. Probably its semantics should be changed, or at least the option should be given, to return
