@@ -1525,11 +1525,31 @@ public class SemgrexTest extends TestCase {
   }
 
   /**
+   * Test that an illegal uniq expression throws an exception when both node and regex are named
+   *<br>
+   * Specifically, the expectation is for a SemgrexParseException
+   */
+  public void testOverlappingUniq() {
+    try {
+      String pattern = "{word:__#1%foo}=foo :: uniq foo";
+      SemgrexPattern semgrex = SemgrexPattern.compile(pattern);
+      throw new RuntimeException("This expression should fail because the node name and regex name overlap");
+    } catch (SemgrexParseException e) {
+      // yay
+    }
+  }
+
+  /**
    * Test that a simple uniq expression is correctly parsed
    */
   public void testParsesUniq() {
+    // Test the basic node name compilation
     String pattern = "{word:foo}=foo :: uniq foo";
     SemgrexPattern semgrex = SemgrexPattern.compile(pattern);
+
+    // Test the basic regex compilation
+    pattern = "{word:__#1%foo} :: uniq foo";
+    semgrex = SemgrexPattern.compile(pattern);
   }
 
   /**
@@ -1570,6 +1590,17 @@ public class SemgrexTest extends TestCase {
     assertEquals(1, matches.get(1).second().size());
     assertEquals(BATCH_PARSES[3], matches.get(2).first().get(CoreAnnotations.TextAnnotation.class));
     assertEquals(1, matches.get(2).second().size());
+
+    // test the uniq operator on a regex match
+    semgrex = SemgrexPattern.compile("{word:__#1%x} !< {} :: uniq x");
+    matches = semgrex.matchSentences(sentences, false);
+    assertEquals(2, matches.size());
+    assertEquals(BATCH_PARSES[0], matches.get(0).first().get(CoreAnnotations.TextAnnotation.class));
+    assertEquals(1, matches.get(0).second().size());
+    assertEquals("foo", matches.get(0).second().get(0).getVariableString("x"));
+    assertEquals(BATCH_PARSES[2], matches.get(1).first().get(CoreAnnotations.TextAnnotation.class));
+    assertEquals(1, matches.get(1).second().size());
+    assertEquals("bar", matches.get(1).second().get(0).getVariableString("x"));
   }
 
   public void testRegexVariableGroups() {

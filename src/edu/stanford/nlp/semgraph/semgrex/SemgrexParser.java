@@ -21,6 +21,9 @@ class SemgrexParser implements SemgrexParserConstants {
   // keep track of which variables we've already seen
   // lets us make sure we don't name new nodes under a negation
   private Set<String> knownVariables = Generics.newHashSet();
+  // keep track of which regex variable groups we've already seen
+  // useful for allowing uniq to operate on
+  private Set<String> knownVarGroups = Generics.newHashSet();
 
   private static final Redwood.RedwoodChannels log = Redwood.channels(SemgrexParser.class);
   private boolean deprecatedAmp = false;
@@ -122,8 +125,11 @@ uniqKeys = new ArrayList<>();
 uniqKeys.add(nextIdentifier.image);
       }
 for (String key : uniqKeys) {
-          if (!knownVariables.contains(key)) {
-            {if (true) throw new SemgrexParseException("Semgrex pattern asked for uniq of node " + key + " which does not exist in the pattern");}
+          if (!knownVariables.contains(key) && !knownVarGroups.contains(key)) {
+            {if (true) throw new SemgrexParseException("Semgrex pattern asked for uniq of node " + key + " which does not exist in the pattern (as a node or regex)");}
+          }
+          if (knownVariables.contains(key) && knownVarGroups.contains(key)) {
+            {if (true) throw new SemgrexParseException("Semgrex pattern asked for uniq of node " + key + " which is very confusing, as it is both a node and a regex.  Please rename one of them");}
           }
         }
         // TODO: can error check that the keys are unique between node and edge names
@@ -633,6 +639,7 @@ underNodeNegation = startUnderNeg;
           groupVar = identifier();
 // TODO: this should have been NUMBER, but that doesn't seem to exist
                 varGroups.add(new Pair<Integer,String>(Integer.parseInt(groupNum.image),groupVar.image));
+                knownVarGroups.add(groupVar.image);
         }
 if (attr != null && value != null) {
                  negated = attrType.image.equals("!:");

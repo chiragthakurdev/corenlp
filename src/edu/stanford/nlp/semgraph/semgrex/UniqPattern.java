@@ -32,12 +32,16 @@ public class UniqPattern extends SemgrexPattern  {
   }
 
   private String getKey(SemgrexMatch match, String key) {
-    // TODO: could also do edge names or variable groups (once those exist)
+    // TODO: could also do edge names
     IndexedWord node = match.getNode(key);
-    if (node == null) {
-      return null;
+    if (node != null) {
+      return node.value();
     }
-    return node.value();
+    String varString = match.getVariableString(key);
+    if (varString != null) {
+      return varString;
+    }
+    return null;
   }
 
   public List<Pair<CoreMap, List<SemgrexMatch>>> postprocessMatches(List<Pair<CoreMap, List<SemgrexMatch>>> matches, boolean keepEmptyMatches) {
