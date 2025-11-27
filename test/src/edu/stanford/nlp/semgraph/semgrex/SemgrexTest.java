@@ -1525,7 +1525,7 @@ public class SemgrexTest extends TestCase {
   }
 
   /**
-   * Test that an illegal uniq expression throws an exception when both node and regex are named
+   * Test that an illegal uniq expression throws an exception when at least two of node, regex, and edge names are the same
    *<br>
    * Specifically, the expectation is for a SemgrexParseException
    */
@@ -1534,6 +1534,22 @@ public class SemgrexTest extends TestCase {
       String pattern = "{word:__#1%foo}=foo :: uniq foo";
       SemgrexPattern semgrex = SemgrexPattern.compile(pattern);
       throw new RuntimeException("This expression should fail because the node name and regex name overlap");
+    } catch (SemgrexParseException e) {
+      // yay
+    }
+
+    try {
+      String pattern = "{word:__#1%foo} <=foo {} :: uniq foo";
+      SemgrexPattern semgrex = SemgrexPattern.compile(pattern);
+      throw new RuntimeException("This expression should fail because the edge name and regex name overlap");
+    } catch (SemgrexParseException e) {
+      // yay
+    }
+
+    try {
+      String pattern = "{word:__}=foo <=foo {} :: uniq foo";
+      SemgrexPattern semgrex = SemgrexPattern.compile(pattern);
+      throw new RuntimeException("This expression should fail because the node name and edge name overlap");
     } catch (SemgrexParseException e) {
       // yay
     }
@@ -1601,6 +1617,24 @@ public class SemgrexTest extends TestCase {
     assertEquals(BATCH_PARSES[2], matches.get(1).first().get(CoreAnnotations.TextAnnotation.class));
     assertEquals(1, matches.get(1).second().size());
     assertEquals("bar", matches.get(1).second().get(0).getVariableString("x"));
+
+    // test the uniq operator on an edge
+    semgrex = SemgrexPattern.compile("{} !< {} >=edge {} :: uniq edge");
+    matches = semgrex.matchSentences(sentences, false);
+    assertEquals(3, matches.size());
+    // sentence 0 should match because the root has a child with nmod
+    assertEquals(BATCH_PARSES[0], matches.get(0).first().get(CoreAnnotations.TextAnnotation.class));
+    assertEquals(1, matches.get(0).second().size());
+    assertEquals("nmod", matches.get(0).second().get(0).getEdge("edge").getRelation().toString());
+    // sentence 1 should match because the root has a child with obj
+    assertEquals(BATCH_PARSES[1], matches.get(1).first().get(CoreAnnotations.TextAnnotation.class));
+    assertEquals(1, matches.get(1).second().size());
+    assertEquals("obj", matches.get(1).second().get(0).getEdge("edge").getRelation().toString());
+    // sentence 2 should match because the root has a child with compound
+    assertEquals(BATCH_PARSES[2], matches.get(2).first().get(CoreAnnotations.TextAnnotation.class));
+    assertEquals(1, matches.get(2).second().size());
+    assertEquals("compound", matches.get(2).second().get(0).getEdge("edge").getRelation().toString());
+    // sentence 3 should not match because both nmod and obj were already seen
   }
 
   public void testRegexVariableGroups() {

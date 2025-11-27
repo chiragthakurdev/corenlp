@@ -32,7 +32,6 @@ public class UniqPattern extends SemgrexPattern  {
   }
 
   private String getKey(SemgrexMatch match, String key) {
-    // TODO: could also do edge names
     IndexedWord node = match.getNode(key);
     if (node != null) {
       return node.value();
@@ -40,6 +39,10 @@ public class UniqPattern extends SemgrexPattern  {
     String varString = match.getVariableString(key);
     if (varString != null) {
       return varString;
+    }
+    SemanticGraphEdge edge = match.getEdge(key);
+    if (edge != null) {
+      return edge.getRelation().toString();
     }
     return null;
   }

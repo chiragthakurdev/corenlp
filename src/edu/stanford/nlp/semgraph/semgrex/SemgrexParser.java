@@ -24,6 +24,9 @@ class SemgrexParser implements SemgrexParserConstants {
   // keep track of which regex variable groups we've already seen
   // useful for allowing uniq to operate on
   private Set<String> knownVarGroups = Generics.newHashSet();
+  // keep track of which edges we've already seen
+  // useful for allowing uniq to operate on
+  private Set<String> knownEdges = Generics.newHashSet();
 
   private static final Redwood.RedwoodChannels log = Redwood.channels(SemgrexParser.class);
   private boolean deprecatedAmp = false;
@@ -125,15 +128,15 @@ uniqKeys = new ArrayList<>();
 uniqKeys.add(nextIdentifier.image);
       }
 for (String key : uniqKeys) {
-          if (!knownVariables.contains(key) && !knownVarGroups.contains(key)) {
-            {if (true) throw new SemgrexParseException("Semgrex pattern asked for uniq of node " + key + " which does not exist in the pattern (as a node or regex)");}
+          if (!knownVariables.contains(key) && !knownVarGroups.contains(key) && !knownEdges.contains(key)) {
+            {if (true) throw new SemgrexParseException("Semgrex pattern asked for uniq of node " + key + " which does not exist in the pattern (as a node, regex, or edge)");}
           }
-          if (knownVariables.contains(key) && knownVarGroups.contains(key)) {
-            {if (true) throw new SemgrexParseException("Semgrex pattern asked for uniq of node " + key + " which is very confusing, as it is both a node and a regex.  Please rename one of them");}
+          if ((knownVariables.contains(key) && (knownVarGroups.contains(key) || knownEdges.contains(key))) ||
+              (knownVarGroups.contains(key) && knownEdges.contains(key))) {
+            {if (true) throw new SemgrexParseException("Semgrex pattern asked for uniq of node " + key +
+                                            " which is very confusing, as it is ambiguous between node, regex, and edge.  Please rename one of them");}
           }
         }
-        // TODO: can error check that the keys are unique between node and edge names
-        // that might require keeping edge names in a known set
         // TODO: edge names might need some upgrades anyway - shouldn't name them under negation, for example
         node = new UniqPattern(node, uniqKeys);
       break;
@@ -428,7 +431,10 @@ child.makeOptional();
       jj_consume_token(-1);
       throw new ParseException();
     }
-if (numArg == null && numArg2 == null) {
+if (edgeName != null) {
+            knownEdges.add(edgeName.image);
+          }
+          if (numArg == null && numArg2 == null) {
             reln = GraphRelation.getRelation(rel != null ? rel.image : null,
                                              relnType != null ? relnType.image : null,
                                              name != null ? name.image : null,
