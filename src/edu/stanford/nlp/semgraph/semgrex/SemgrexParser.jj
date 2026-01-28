@@ -70,6 +70,7 @@ SPECIAL_TOKEN:
 TOKEN:
 {
         < UNIQ: "uniq" >
+|       < SORT: "sort" >
 }
 
 TOKEN:
@@ -90,7 +91,8 @@ SemgrexPattern Root() : {
   List<SemgrexPattern> children = new ArrayList<SemgrexPattern>();
   Token startToken = null;
 
-  List<String> uniqKeys = null;
+  List<String> postprocessKeys = null;
+  Token postprocess = null;
   Token nextIdentifier = null;
   // a local variable
 } {
@@ -119,9 +121,9 @@ SemgrexPattern Root() : {
   )
   (
     (
-      "::" <UNIQ> { uniqKeys = new ArrayList<>(); }  (nextIdentifier = identifier() { uniqKeys.add(nextIdentifier.image); })*
+      "::" (postprocess = <UNIQ> | postprocess = <SORT>) { postprocessKeys = new ArrayList<>(); }  (nextIdentifier = identifier() { postprocessKeys.add(nextIdentifier.image); })*
       {
-        for (String key : uniqKeys) {
+        for (String key : postprocessKeys) {
           if (!knownVariables.contains(key) && !knownVarGroups.contains(key) && !knownEdges.contains(key)) {
             throw new SemgrexParseException("Semgrex pattern asked for uniq of node " + key + " which does not exist in the pattern (as a node, regex, or edge)");
           }
@@ -132,7 +134,11 @@ SemgrexPattern Root() : {
           }
         }
         // TODO: edge names might need some upgrades anyway - shouldn't name them under negation, for example
-        node = new UniqPattern(node, uniqKeys);
+        if (postprocess.image.equals("uniq")) {
+          node = new UniqPattern(node, postprocessKeys);
+        } else if (postprocess.image.equals("sort")) {
+          node = new SortPattern(node, postprocessKeys);
+        }
       }
     )?
   )

@@ -2,10 +2,9 @@ package edu.stanford.nlp.semgraph.semgrex;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
@@ -20,39 +19,79 @@ import edu.stanford.nlp.util.VariableStrings;
  * At batch processing time, this pares a list of matches down to
  * one match for each matching attributes.
  */
-public class UniqPattern extends SemgrexPattern  {
-  private static final long serialVersionUID = -38315768154569L;
+public class SortPattern extends SemgrexPattern  {
+  private static final long serialVersionUID = -3843276786L;
 
   private final SemgrexPattern child;
   private final List<String> keys;
 
-  public UniqPattern(SemgrexPattern child, List<String> keys) {
+  public SortPattern(SemgrexPattern child, List<String> keys) {
     this.child = child;
     this.keys = new ArrayList<>(keys);
   }
 
-  public List<Pair<CoreMap, List<SemgrexMatch>>> postprocessMatches(List<Pair<CoreMap, List<SemgrexMatch>>> matches, boolean keepEmptyMatches) {
-    // hashing lists should be okay here since the lists will not change
-    // while the postprocessing is happening
-    Set<List<String>> seenKeys = new HashSet<>();
-
-    List<Pair<CoreMap, List<SemgrexMatch>>> newMatches = new ArrayList<>();
-    for (Pair<CoreMap, List<SemgrexMatch>> sentence : matches) {
-      List<SemgrexMatch> newSentenceMatches = new ArrayList<>();
-      for (SemgrexMatch match : sentence.second()) {
-        List<String> matchKey = buildKey(match, keys);
-        if (seenKeys.contains(matchKey)) {
-          continue;
-        }
-        seenKeys.add(matchKey);
-        newSentenceMatches.add(match);
+  static public int compareKeys(List<String> first, List<String> second) {
+    if (first == null && second == null) {
+      return 0;
+    }
+    if (second == null) {
+      return -1;
+    }
+    if (first == null) {
+      return 1;
+    }
+    for (int idx = 0; idx < first.size() && idx < second.size(); ++idx) {
+      int cmp = first.get(idx).compareTo(second.get(idx));
+      if (cmp != 0) {
+        return cmp;
       }
-      if (newSentenceMatches.size() > 0 || keepEmptyMatches) {
-        newMatches.add(new Pair<>(sentence.first(), newSentenceMatches));
+    }
+    // what if they are different lengths?
+    // shouldn't happen here anyway
+    return 0;
+  }
+
+  static class KeyPairComparator implements Comparator<Pair<Integer, List<String>>> {
+    public int compare(Pair<Integer, List<String>> first, Pair<Integer, List<String>> second) {
+      return compareKeys(first.second, second.second);
+    }
+  }
+
+  /**
+   * Sort sentences by how they matched the keys in the ::sort operation
+   *<br>
+   * In the case of multiple matches for a single sentence, this chooses the lowest key
+   */
+  public List<Pair<CoreMap, List<SemgrexMatch>>> postprocessMatches(List<Pair<CoreMap, List<SemgrexMatch>>> matches, boolean keepEmptyMatches) {
+    List<Pair<CoreMap, List<SemgrexMatch>>> filteredMatches = new ArrayList<>();
+    for (Pair<CoreMap, List<SemgrexMatch>> sentence : matches) {
+      if (sentence.second().size() > 0 || keepEmptyMatches) {
+        filteredMatches.add(sentence);
       }
     }
 
-    return newMatches;
+    List<Pair<Integer, List<String>>> sentenceKeys = new ArrayList<>();
+    for (int idx = 0; idx < filteredMatches.size(); ++idx) {
+      Pair<CoreMap, List<SemgrexMatch>> sentence = filteredMatches.get(idx);
+      List<String> key = null;
+      for (SemgrexMatch match : sentence.second()) {
+        List<String> newKey = buildKey(match, keys);
+        if (compareKeys(newKey, key) < 0) {
+          key = newKey;
+        }
+      }
+      sentenceKeys.add(new Pair<>(idx, key));
+    }
+
+    Collections.sort(sentenceKeys, new KeyPairComparator());
+
+    List<Pair<CoreMap, List<SemgrexMatch>>> finalMatches = new ArrayList<>();
+    for (int idx = 0; idx < sentenceKeys.size(); ++idx) {
+      Pair<Integer, List<String>> key = sentenceKeys.get(idx);
+      finalMatches.add(filteredMatches.get(key.first));
+    }
+
+    return finalMatches;
   }
 
   @Override
@@ -72,7 +111,7 @@ public class UniqPattern extends SemgrexPattern  {
 
   @Override
   public void setChild(SemgrexPattern n) {
-    throw new UnsupportedOperationException("Child should only be set on a UniqPattern at creation time");
+    throw new UnsupportedOperationException("Child should only be set on a SortPattern at creation time");
   }
 
   @Override
@@ -89,7 +128,7 @@ public class UniqPattern extends SemgrexPattern  {
     if (addChild) {
       sb.append(child.toString(true));
     }
-    sb.append(" :: uniq");
+    sb.append(" :: sort");
     for (String key : keys) {
       sb.append(" ");
       sb.append(key);

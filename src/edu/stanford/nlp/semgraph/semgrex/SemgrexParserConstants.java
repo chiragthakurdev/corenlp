@@ -15,19 +15,21 @@ interface SemgrexParserConstants {
   /** RegularExpression Id. */
   int UNIQ = 2;
   /** RegularExpression Id. */
-  int RELATION = 3;
+  int SORT = 3;
   /** RegularExpression Id. */
-  int ALIGNRELN = 4;
+  int RELATION = 4;
   /** RegularExpression Id. */
-  int IDENTIFIER = 5;
+  int ALIGNRELN = 5;
   /** RegularExpression Id. */
-  int NUMBER = 6;
+  int IDENTIFIER = 6;
   /** RegularExpression Id. */
-  int EMPTY = 7;
+  int NUMBER = 7;
   /** RegularExpression Id. */
-  int ROOT = 8;
+  int EMPTY = 8;
   /** RegularExpression Id. */
-  int REGEX = 9;
+  int ROOT = 9;
+  /** RegularExpression Id. */
+  int REGEX = 10;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -37,6 +39,7 @@ interface SemgrexParserConstants {
     "<EOF>",
     "<WHITESPACE>",
     "\"uniq\"",
+    "\"sort\"",
     "<RELATION>",
     "\"@\"",
     "<IDENTIFIER>",

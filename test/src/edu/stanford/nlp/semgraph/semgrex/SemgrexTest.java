@@ -1637,6 +1637,27 @@ public class SemgrexTest extends TestCase {
     // sentence 3 should not match because both nmod and obj were already seen
   }
 
+  public void testBatchSort() {
+    List<CoreMap> sentences = buildSmallBatch();
+    SemgrexPattern semgrex = SemgrexPattern.compile("{word:foo}=x >=edge {}=y :: sort edge");
+    List<Pair<CoreMap, List<SemgrexMatch>>> matches = semgrex.matchSentences(sentences, false);
+    assertEquals(3, matches.size());
+
+    // After sorting, the results should be in edge order
+    // (and it should have been a stable sort)
+    assertEquals(BATCH_PARSES[0], matches.get(0).first().get(CoreAnnotations.TextAnnotation.class));
+    assertEquals(1, matches.get(0).second().size());
+    assertEquals("nmod", matches.get(0).second().get(0).getEdge("edge").getRelation().toString());
+
+    assertEquals(BATCH_PARSES[3], matches.get(1).first().get(CoreAnnotations.TextAnnotation.class));
+    assertEquals(2, matches.get(1).second().size());
+    assertEquals("nmod", matches.get(1).second().get(0).getEdge("edge").getRelation().toString());
+
+    assertEquals(BATCH_PARSES[1], matches.get(2).first().get(CoreAnnotations.TextAnnotation.class));
+    assertEquals(1, matches.get(2).second().size());
+    assertEquals("obj", matches.get(2).second().get(0).getEdge("edge").getRelation().toString());
+  }
+
   public void testRegexVariableGroups() {
     // first, a basic test that it is capturing the variable groups correctly
     SemgrexPattern pattern = SemgrexPattern.compile("{word:/(.*ill.*)/#1%name}");

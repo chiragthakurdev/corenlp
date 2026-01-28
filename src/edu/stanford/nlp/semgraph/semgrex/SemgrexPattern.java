@@ -370,6 +370,35 @@ public abstract class SemgrexPattern implements Serializable  {
   }
 
   /**
+   * For a pattern such as UniqPattern, get this key from the SemgrexMatch.
+   *<br>
+   * The key is expected to be unambiguous, which can be enforced at SemgrexPattern compilation time
+   */
+  String getKey(SemgrexMatch match, String key) {
+    IndexedWord node = match.getNode(key);
+    if (node != null) {
+      return node.value();
+    }
+    String varString = match.getVariableString(key);
+    if (varString != null) {
+      return varString;
+    }
+    SemanticGraphEdge edge = match.getEdge(key);
+    if (edge != null) {
+      return edge.getRelation().toString();
+    }
+    return null;
+  }
+
+  List<String> buildKey(SemgrexMatch match, List<String> keys) {
+    List<String> matchKey = new ArrayList<>();
+    for (String key : keys) {
+      matchKey.add(getKey(match, key));
+    }
+    return matchKey;
+  }
+
+  /**
    * Returns a list of matching sentences and each of the matches from those sentences.
    *<br>
    * Non-matching sentences are currently not returned (may change in the future to return an empty list).
