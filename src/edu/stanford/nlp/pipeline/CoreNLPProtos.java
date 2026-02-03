@@ -74778,26 +74778,26 @@ public final class CoreNLPProtos {
 
       /**
        * <pre>
-       * when processing multiple dependency graphs at once,
-       * which dependency graph this applies to
+       * when processing multiple sentences at once,
+       * which sentence this applies to
        * indexed from 0
        * </pre>
        *
-       * <code>optional int32 graphIndex = 4;</code>
-       * @return Whether the graphIndex field is set.
+       * <code>optional int32 sentenceIndex = 4;</code>
+       * @return Whether the sentenceIndex field is set.
        */
-      boolean hasGraphIndex();
+      boolean hasSentenceIndex();
       /**
        * <pre>
-       * when processing multiple dependency graphs at once,
-       * which dependency graph this applies to
+       * when processing multiple sentences at once,
+       * which sentence this applies to
        * indexed from 0
        * </pre>
        *
-       * <code>optional int32 graphIndex = 4;</code>
-       * @return The graphIndex.
+       * <code>optional int32 sentenceIndex = 4;</code>
+       * @return The sentenceIndex.
        */
-      int getGraphIndex();
+      int getSentenceIndex();
 
       /**
        * <pre>
@@ -75001,35 +75001,35 @@ public final class CoreNLPProtos {
         return edge_.get(index);
       }
 
-      public static final int GRAPHINDEX_FIELD_NUMBER = 4;
-      private int graphIndex_ = 0;
+      public static final int SENTENCEINDEX_FIELD_NUMBER = 4;
+      private int sentenceIndex_ = 0;
       /**
        * <pre>
-       * when processing multiple dependency graphs at once,
-       * which dependency graph this applies to
+       * when processing multiple sentences at once,
+       * which sentence this applies to
        * indexed from 0
        * </pre>
        *
-       * <code>optional int32 graphIndex = 4;</code>
-       * @return Whether the graphIndex field is set.
+       * <code>optional int32 sentenceIndex = 4;</code>
+       * @return Whether the sentenceIndex field is set.
        */
       @java.lang.Override
-      public boolean hasGraphIndex() {
+      public boolean hasSentenceIndex() {
         return ((bitField0_ & 0x00000002) != 0);
       }
       /**
        * <pre>
-       * when processing multiple dependency graphs at once,
-       * which dependency graph this applies to
+       * when processing multiple sentences at once,
+       * which sentence this applies to
        * indexed from 0
        * </pre>
        *
-       * <code>optional int32 graphIndex = 4;</code>
-       * @return The graphIndex.
+       * <code>optional int32 sentenceIndex = 4;</code>
+       * @return The sentenceIndex.
        */
       @java.lang.Override
-      public int getGraphIndex() {
-        return graphIndex_;
+      public int getSentenceIndex() {
+        return sentenceIndex_;
       }
 
       public static final int SEMGREXINDEX_FIELD_NUMBER = 5;
@@ -75107,7 +75107,7 @@ public final class CoreNLPProtos {
           output.writeMessage(3, reln_.get(i));
         }
         if (((bitField0_ & 0x00000002) != 0)) {
-          output.writeInt32(4, graphIndex_);
+          output.writeInt32(4, sentenceIndex_);
         }
         if (((bitField0_ & 0x00000004) != 0)) {
           output.writeInt32(5, semgrexIndex_);
@@ -75138,7 +75138,7 @@ public final class CoreNLPProtos {
         }
         if (((bitField0_ & 0x00000002) != 0)) {
           size += com.google.protobuf.CodedOutputStream
-            .computeInt32Size(4, graphIndex_);
+            .computeInt32Size(4, sentenceIndex_);
         }
         if (((bitField0_ & 0x00000004) != 0)) {
           size += com.google.protobuf.CodedOutputStream
@@ -75174,10 +75174,10 @@ public final class CoreNLPProtos {
             .equals(other.getRelnList())) return false;
         if (!getEdgeList()
             .equals(other.getEdgeList())) return false;
-        if (hasGraphIndex() != other.hasGraphIndex()) return false;
-        if (hasGraphIndex()) {
-          if (getGraphIndex()
-              != other.getGraphIndex()) return false;
+        if (hasSentenceIndex() != other.hasSentenceIndex()) return false;
+        if (hasSentenceIndex()) {
+          if (getSentenceIndex()
+              != other.getSentenceIndex()) return false;
         }
         if (hasSemgrexIndex() != other.hasSemgrexIndex()) return false;
         if (hasSemgrexIndex()) {
@@ -75211,9 +75211,9 @@ public final class CoreNLPProtos {
           hash = (37 * hash) + EDGE_FIELD_NUMBER;
           hash = (53 * hash) + getEdgeList().hashCode();
         }
-        if (hasGraphIndex()) {
-          hash = (37 * hash) + GRAPHINDEX_FIELD_NUMBER;
-          hash = (53 * hash) + getGraphIndex();
+        if (hasSentenceIndex()) {
+          hash = (37 * hash) + SENTENCEINDEX_FIELD_NUMBER;
+          hash = (53 * hash) + getSentenceIndex();
         }
         if (hasSemgrexIndex()) {
           hash = (37 * hash) + SEMGREXINDEX_FIELD_NUMBER;
@@ -75372,7 +75372,7 @@ public final class CoreNLPProtos {
             edgeBuilder_.clear();
           }
           bitField0_ = (bitField0_ & ~0x00000008);
-          graphIndex_ = 0;
+          sentenceIndex_ = 0;
           semgrexIndex_ = 0;
           return this;
         }
@@ -75444,7 +75444,7 @@ public final class CoreNLPProtos {
             to_bitField0_ |= 0x00000001;
           }
           if (((from_bitField0_ & 0x00000010) != 0)) {
-            result.graphIndex_ = graphIndex_;
+            result.sentenceIndex_ = sentenceIndex_;
             to_bitField0_ |= 0x00000002;
           }
           if (((from_bitField0_ & 0x00000020) != 0)) {
@@ -75579,8 +75579,8 @@ public final class CoreNLPProtos {
               }
             }
           }
-          if (other.hasGraphIndex()) {
-            setGraphIndex(other.getGraphIndex());
+          if (other.hasSentenceIndex()) {
+            setSentenceIndex(other.getSentenceIndex());
           }
           if (other.hasSemgrexIndex()) {
             setSemgrexIndex(other.getSemgrexIndex());
@@ -75661,7 +75661,7 @@ public final class CoreNLPProtos {
                   break;
                 } // case 26
                 case 32: {
-                  graphIndex_ = input.readInt32();
+                  sentenceIndex_ = input.readInt32();
                   bitField0_ |= 0x00000010;
                   break;
                 } // case 32
@@ -76460,66 +76460,66 @@ public final class CoreNLPProtos {
           return edgeBuilder_;
         }
 
-        private int graphIndex_ ;
+        private int sentenceIndex_ ;
         /**
          * <pre>
-         * when processing multiple dependency graphs at once,
-         * which dependency graph this applies to
+         * when processing multiple sentences at once,
+         * which sentence this applies to
          * indexed from 0
          * </pre>
          *
-         * <code>optional int32 graphIndex = 4;</code>
-         * @return Whether the graphIndex field is set.
+         * <code>optional int32 sentenceIndex = 4;</code>
+         * @return Whether the sentenceIndex field is set.
          */
         @java.lang.Override
-        public boolean hasGraphIndex() {
+        public boolean hasSentenceIndex() {
           return ((bitField0_ & 0x00000010) != 0);
         }
         /**
          * <pre>
-         * when processing multiple dependency graphs at once,
-         * which dependency graph this applies to
+         * when processing multiple sentences at once,
+         * which sentence this applies to
          * indexed from 0
          * </pre>
          *
-         * <code>optional int32 graphIndex = 4;</code>
-         * @return The graphIndex.
+         * <code>optional int32 sentenceIndex = 4;</code>
+         * @return The sentenceIndex.
          */
         @java.lang.Override
-        public int getGraphIndex() {
-          return graphIndex_;
+        public int getSentenceIndex() {
+          return sentenceIndex_;
         }
         /**
          * <pre>
-         * when processing multiple dependency graphs at once,
-         * which dependency graph this applies to
+         * when processing multiple sentences at once,
+         * which sentence this applies to
          * indexed from 0
          * </pre>
          *
-         * <code>optional int32 graphIndex = 4;</code>
-         * @param value The graphIndex to set.
+         * <code>optional int32 sentenceIndex = 4;</code>
+         * @param value The sentenceIndex to set.
          * @return This builder for chaining.
          */
-        public Builder setGraphIndex(int value) {
+        public Builder setSentenceIndex(int value) {
 
-          graphIndex_ = value;
+          sentenceIndex_ = value;
           bitField0_ |= 0x00000010;
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * when processing multiple dependency graphs at once,
-         * which dependency graph this applies to
+         * when processing multiple sentences at once,
+         * which sentence this applies to
          * indexed from 0
          * </pre>
          *
-         * <code>optional int32 graphIndex = 4;</code>
+         * <code>optional int32 sentenceIndex = 4;</code>
          * @return This builder for chaining.
          */
-        public Builder clearGraphIndex() {
+        public Builder clearSentenceIndex() {
           bitField0_ = (bitField0_ & ~0x00000010);
-          graphIndex_ = 0;
+          sentenceIndex_ = 0;
           onChanged();
           return this;
         }
@@ -102051,7 +102051,7 @@ public final class CoreNLPProtos {
       "ne.SemgrexRequest.Dependencies\032z\n\014Depend" +
       "encies\022/\n\005token\030\001 \003(\0132 .edu.stanford.nlp" +
       ".pipeline.Token\0229\n\005graph\030\002 \002(\0132*.edu.sta" +
-      "nford.nlp.pipeline.DependencyGraph\"\373\005\n\017S" +
+      "nford.nlp.pipeline.DependencyGraph\"\376\005\n\017S" +
       "emgrexResponse\022F\n\006result\030\001 \003(\01326.edu.sta" +
       "nford.nlp.pipeline.SemgrexResponse.Graph" +
       "Result\032-\n\tNamedNode\022\014\n\004name\030\001 \002(\t\022\022\n\nmat" +
@@ -102059,94 +102059,95 @@ public final class CoreNLPProtos {
       " \002(\t\022\014\n\004reln\030\002 \002(\t\032\200\001\n\tNamedEdge\022\014\n\004name" +
       "\030\001 \002(\t\022\016\n\006source\030\002 \002(\005\022\016\n\006target\030\003 \002(\005\022\014" +
       "\n\004reln\030\004 \001(\t\022\017\n\007isExtra\030\005 \001(\010\022\022\n\nsourceC" +
-      "opy\030\006 \001(\r\022\022\n\ntargetCopy\030\007 \001(\r\032\225\002\n\005Match\022" +
+      "opy\030\006 \001(\r\022\022\n\ntargetCopy\030\007 \001(\r\032\230\002\n\005Match\022" +
       "\022\n\nmatchIndex\030\001 \002(\005\022B\n\004node\030\002 \003(\01324.edu." +
       "stanford.nlp.pipeline.SemgrexResponse.Na" +
       "medNode\022F\n\004reln\030\003 \003(\01328.edu.stanford.nlp" +
       ".pipeline.SemgrexResponse.NamedRelation\022" +
       "B\n\004edge\030\006 \003(\01324.edu.stanford.nlp.pipelin" +
-      "e.SemgrexResponse.NamedEdge\022\022\n\ngraphInde" +
-      "x\030\004 \001(\005\022\024\n\014semgrexIndex\030\005 \001(\005\032P\n\rSemgrex" +
-      "Result\022?\n\005match\030\001 \003(\01320.edu.stanford.nlp" +
-      ".pipeline.SemgrexResponse.Match\032W\n\013Graph" +
-      "Result\022H\n\006result\030\001 \003(\01328.edu.stanford.nl" +
-      "p.pipeline.SemgrexResponse.SemgrexResult" +
-      "\"\360\001\n\017SsurgeonRequest\022E\n\010ssurgeon\030\001 \003(\01323" +
-      ".edu.stanford.nlp.pipeline.SsurgeonReque" +
-      "st.Ssurgeon\0229\n\005graph\030\002 \003(\0132*.edu.stanfor" +
-      "d.nlp.pipeline.DependencyGraph\032[\n\010Ssurge" +
-      "on\022\017\n\007semgrex\030\001 \001(\t\022\021\n\toperation\030\002 \003(\t\022\n" +
-      "\n\002id\030\003 \001(\t\022\r\n\005notes\030\004 \001(\t\022\020\n\010language\030\005 " +
-      "\001(\t\"\274\001\n\020SsurgeonResponse\022J\n\006result\030\001 \003(\013" +
-      "2:.edu.stanford.nlp.pipeline.SsurgeonRes" +
-      "ponse.SsurgeonResult\032\\\n\016SsurgeonResult\0229" +
-      "\n\005graph\030\001 \001(\0132*.edu.stanford.nlp.pipelin" +
-      "e.DependencyGraph\022\017\n\007changed\030\002 \001(\010\"W\n\022To" +
-      "kensRegexRequest\0220\n\003doc\030\001 \002(\0132#.edu.stan" +
-      "ford.nlp.pipeline.Document\022\017\n\007pattern\030\002 " +
-      "\003(\t\"\247\003\n\023TokensRegexResponse\022J\n\005match\030\001 \003" +
-      "(\0132;.edu.stanford.nlp.pipeline.TokensReg" +
-      "exResponse.PatternMatch\0329\n\rMatchLocation" +
-      "\022\014\n\004text\030\001 \001(\t\022\r\n\005begin\030\002 \001(\005\022\013\n\003end\030\003 \001" +
-      "(\005\032\263\001\n\005Match\022\020\n\010sentence\030\001 \002(\005\022K\n\005match\030" +
-      "\002 \002(\0132<.edu.stanford.nlp.pipeline.Tokens" +
-      "RegexResponse.MatchLocation\022K\n\005group\030\003 \003" +
-      "(\0132<.edu.stanford.nlp.pipeline.TokensReg" +
-      "exResponse.MatchLocation\032S\n\014PatternMatch" +
-      "\022C\n\005match\030\001 \003(\01324.edu.stanford.nlp.pipel" +
-      "ine.TokensRegexResponse.Match\"\256\001\n\031Depend" +
-      "encyEnhancerRequest\0225\n\010document\030\001 \002(\0132#." +
-      "edu.stanford.nlp.pipeline.Document\0227\n\010la" +
-      "nguage\030\002 \001(\0162#.edu.stanford.nlp.pipeline" +
-      ".LanguageH\000\022\032\n\020relativePronouns\030\003 \001(\tH\000B" +
-      "\005\n\003ref\"\264\001\n\022FlattenedParseTree\022A\n\005nodes\030\001" +
-      " \003(\01322.edu.stanford.nlp.pipeline.Flatten" +
-      "edParseTree.Node\032[\n\004Node\022\022\n\010openNode\030\001 \001" +
-      "(\010H\000\022\023\n\tcloseNode\030\002 \001(\010H\000\022\017\n\005value\030\003 \001(\t" +
-      "H\000\022\r\n\005score\030\004 \001(\001B\n\n\010contents\"\366\001\n\025Evalua" +
-      "teParserRequest\022N\n\010treebank\030\001 \003(\0132<.edu." +
-      "stanford.nlp.pipeline.EvaluateParserRequ" +
-      "est.ParseResult\032\214\001\n\013ParseResult\022;\n\004gold\030" +
-      "\001 \002(\0132-.edu.stanford.nlp.pipeline.Flatte" +
-      "nedParseTree\022@\n\tpredicted\030\002 \003(\0132-.edu.st" +
-      "anford.nlp.pipeline.FlattenedParseTree\"E" +
-      "\n\026EvaluateParserResponse\022\n\n\002f1\030\001 \002(\001\022\017\n\007" +
-      "kbestF1\030\002 \001(\001\022\016\n\006treeF1\030\003 \003(\001\"\310\001\n\017Tsurge" +
-      "onRequest\022H\n\noperations\030\001 \003(\01324.edu.stan" +
-      "ford.nlp.pipeline.TsurgeonRequest.Operat" +
-      "ion\022<\n\005trees\030\002 \003(\0132-.edu.stanford.nlp.pi" +
-      "peline.FlattenedParseTree\032-\n\tOperation\022\016" +
-      "\n\006tregex\030\001 \002(\t\022\020\n\010tsurgeon\030\002 \003(\t\"P\n\020Tsur" +
-      "geonResponse\022<\n\005trees\030\001 \003(\0132-.edu.stanfo" +
-      "rd.nlp.pipeline.FlattenedParseTree\"\205\001\n\021M" +
-      "orphologyRequest\022F\n\005words\030\001 \003(\01327.edu.st" +
-      "anford.nlp.pipeline.MorphologyRequest.Ta" +
-      "ggedWord\032(\n\nTaggedWord\022\014\n\004word\030\001 \002(\t\022\014\n\004" +
-      "xpos\030\002 \001(\t\"\232\001\n\022MorphologyResponse\022I\n\005wor" +
-      "ds\030\001 \003(\0132:.edu.stanford.nlp.pipeline.Mor" +
-      "phologyResponse.WordTagLemma\0329\n\014WordTagL" +
-      "emma\022\014\n\004word\030\001 \002(\t\022\014\n\004xpos\030\002 \001(\t\022\r\n\005lemm" +
-      "a\030\003 \002(\t\"Z\n\032DependencyConverterRequest\022<\n" +
-      "\005trees\030\001 \003(\0132-.edu.stanford.nlp.pipeline" +
-      ".FlattenedParseTree\"\220\002\n\033DependencyConver" +
-      "terResponse\022`\n\013conversions\030\001 \003(\0132K.edu.s" +
-      "tanford.nlp.pipeline.DependencyConverter" +
-      "Response.DependencyConversion\032\216\001\n\024Depend" +
-      "encyConversion\0229\n\005graph\030\001 \002(\0132*.edu.stan" +
-      "ford.nlp.pipeline.DependencyGraph\022;\n\004tre" +
-      "e\030\002 \001(\0132-.edu.stanford.nlp.pipeline.Flat" +
-      "tenedParseTree*\243\001\n\010Language\022\013\n\007Unknown\020\000" +
-      "\022\007\n\003Any\020\001\022\n\n\006Arabic\020\002\022\013\n\007Chinese\020\003\022\013\n\007En" +
-      "glish\020\004\022\n\n\006German\020\005\022\n\n\006French\020\006\022\n\n\006Hebre" +
-      "w\020\007\022\013\n\007Spanish\020\010\022\024\n\020UniversalEnglish\020\t\022\024" +
-      "\n\020UniversalChinese\020\n*h\n\tSentiment\022\023\n\017STR" +
-      "ONG_NEGATIVE\020\000\022\021\n\rWEAK_NEGATIVE\020\001\022\013\n\007NEU" +
-      "TRAL\020\002\022\021\n\rWEAK_POSITIVE\020\003\022\023\n\017STRONG_POSI" +
-      "TIVE\020\004*\223\001\n\024NaturalLogicRelation\022\017\n\013EQUIV" +
-      "ALENCE\020\000\022\026\n\022FORWARD_ENTAILMENT\020\001\022\026\n\022REVE" +
-      "RSE_ENTAILMENT\020\002\022\014\n\010NEGATION\020\003\022\017\n\013ALTERN" +
-      "ATION\020\004\022\t\n\005COVER\020\005\022\020\n\014INDEPENDENCE\020\006B*\n\031" +
-      "edu.stanford.nlp.pipelineB\rCoreNLPProtos"
+      "e.SemgrexResponse.NamedEdge\022\025\n\rsentenceI" +
+      "ndex\030\004 \001(\005\022\024\n\014semgrexIndex\030\005 \001(\005\032P\n\rSemg" +
+      "rexResult\022?\n\005match\030\001 \003(\01320.edu.stanford." +
+      "nlp.pipeline.SemgrexResponse.Match\032W\n\013Gr" +
+      "aphResult\022H\n\006result\030\001 \003(\01328.edu.stanford" +
+      ".nlp.pipeline.SemgrexResponse.SemgrexRes" +
+      "ult\"\360\001\n\017SsurgeonRequest\022E\n\010ssurgeon\030\001 \003(" +
+      "\01323.edu.stanford.nlp.pipeline.SsurgeonRe" +
+      "quest.Ssurgeon\0229\n\005graph\030\002 \003(\0132*.edu.stan" +
+      "ford.nlp.pipeline.DependencyGraph\032[\n\010Ssu" +
+      "rgeon\022\017\n\007semgrex\030\001 \001(\t\022\021\n\toperation\030\002 \003(" +
+      "\t\022\n\n\002id\030\003 \001(\t\022\r\n\005notes\030\004 \001(\t\022\020\n\010language" +
+      "\030\005 \001(\t\"\274\001\n\020SsurgeonResponse\022J\n\006result\030\001 " +
+      "\003(\0132:.edu.stanford.nlp.pipeline.Ssurgeon" +
+      "Response.SsurgeonResult\032\\\n\016SsurgeonResul" +
+      "t\0229\n\005graph\030\001 \001(\0132*.edu.stanford.nlp.pipe" +
+      "line.DependencyGraph\022\017\n\007changed\030\002 \001(\010\"W\n" +
+      "\022TokensRegexRequest\0220\n\003doc\030\001 \002(\0132#.edu.s" +
+      "tanford.nlp.pipeline.Document\022\017\n\007pattern" +
+      "\030\002 \003(\t\"\247\003\n\023TokensRegexResponse\022J\n\005match\030" +
+      "\001 \003(\0132;.edu.stanford.nlp.pipeline.Tokens" +
+      "RegexResponse.PatternMatch\0329\n\rMatchLocat" +
+      "ion\022\014\n\004text\030\001 \001(\t\022\r\n\005begin\030\002 \001(\005\022\013\n\003end\030" +
+      "\003 \001(\005\032\263\001\n\005Match\022\020\n\010sentence\030\001 \002(\005\022K\n\005mat" +
+      "ch\030\002 \002(\0132<.edu.stanford.nlp.pipeline.Tok" +
+      "ensRegexResponse.MatchLocation\022K\n\005group\030" +
+      "\003 \003(\0132<.edu.stanford.nlp.pipeline.Tokens" +
+      "RegexResponse.MatchLocation\032S\n\014PatternMa" +
+      "tch\022C\n\005match\030\001 \003(\01324.edu.stanford.nlp.pi" +
+      "peline.TokensRegexResponse.Match\"\256\001\n\031Dep" +
+      "endencyEnhancerRequest\0225\n\010document\030\001 \002(\013" +
+      "2#.edu.stanford.nlp.pipeline.Document\0227\n" +
+      "\010language\030\002 \001(\0162#.edu.stanford.nlp.pipel" +
+      "ine.LanguageH\000\022\032\n\020relativePronouns\030\003 \001(\t" +
+      "H\000B\005\n\003ref\"\264\001\n\022FlattenedParseTree\022A\n\005node" +
+      "s\030\001 \003(\01322.edu.stanford.nlp.pipeline.Flat" +
+      "tenedParseTree.Node\032[\n\004Node\022\022\n\010openNode\030" +
+      "\001 \001(\010H\000\022\023\n\tcloseNode\030\002 \001(\010H\000\022\017\n\005value\030\003 " +
+      "\001(\tH\000\022\r\n\005score\030\004 \001(\001B\n\n\010contents\"\366\001\n\025Eva" +
+      "luateParserRequest\022N\n\010treebank\030\001 \003(\0132<.e" +
+      "du.stanford.nlp.pipeline.EvaluateParserR" +
+      "equest.ParseResult\032\214\001\n\013ParseResult\022;\n\004go" +
+      "ld\030\001 \002(\0132-.edu.stanford.nlp.pipeline.Fla" +
+      "ttenedParseTree\022@\n\tpredicted\030\002 \003(\0132-.edu" +
+      ".stanford.nlp.pipeline.FlattenedParseTre" +
+      "e\"E\n\026EvaluateParserResponse\022\n\n\002f1\030\001 \002(\001\022" +
+      "\017\n\007kbestF1\030\002 \001(\001\022\016\n\006treeF1\030\003 \003(\001\"\310\001\n\017Tsu" +
+      "rgeonRequest\022H\n\noperations\030\001 \003(\01324.edu.s" +
+      "tanford.nlp.pipeline.TsurgeonRequest.Ope" +
+      "ration\022<\n\005trees\030\002 \003(\0132-.edu.stanford.nlp" +
+      ".pipeline.FlattenedParseTree\032-\n\tOperatio" +
+      "n\022\016\n\006tregex\030\001 \002(\t\022\020\n\010tsurgeon\030\002 \003(\t\"P\n\020T" +
+      "surgeonResponse\022<\n\005trees\030\001 \003(\0132-.edu.sta" +
+      "nford.nlp.pipeline.FlattenedParseTree\"\205\001" +
+      "\n\021MorphologyRequest\022F\n\005words\030\001 \003(\01327.edu" +
+      ".stanford.nlp.pipeline.MorphologyRequest" +
+      ".TaggedWord\032(\n\nTaggedWord\022\014\n\004word\030\001 \002(\t\022" +
+      "\014\n\004xpos\030\002 \001(\t\"\232\001\n\022MorphologyResponse\022I\n\005" +
+      "words\030\001 \003(\0132:.edu.stanford.nlp.pipeline." +
+      "MorphologyResponse.WordTagLemma\0329\n\014WordT" +
+      "agLemma\022\014\n\004word\030\001 \002(\t\022\014\n\004xpos\030\002 \001(\t\022\r\n\005l" +
+      "emma\030\003 \002(\t\"Z\n\032DependencyConverterRequest" +
+      "\022<\n\005trees\030\001 \003(\0132-.edu.stanford.nlp.pipel" +
+      "ine.FlattenedParseTree\"\220\002\n\033DependencyCon" +
+      "verterResponse\022`\n\013conversions\030\001 \003(\0132K.ed" +
+      "u.stanford.nlp.pipeline.DependencyConver" +
+      "terResponse.DependencyConversion\032\216\001\n\024Dep" +
+      "endencyConversion\0229\n\005graph\030\001 \002(\0132*.edu.s" +
+      "tanford.nlp.pipeline.DependencyGraph\022;\n\004" +
+      "tree\030\002 \001(\0132-.edu.stanford.nlp.pipeline.F" +
+      "lattenedParseTree*\243\001\n\010Language\022\013\n\007Unknow" +
+      "n\020\000\022\007\n\003Any\020\001\022\n\n\006Arabic\020\002\022\013\n\007Chinese\020\003\022\013\n" +
+      "\007English\020\004\022\n\n\006German\020\005\022\n\n\006French\020\006\022\n\n\006He" +
+      "brew\020\007\022\013\n\007Spanish\020\010\022\024\n\020UniversalEnglish\020" +
+      "\t\022\024\n\020UniversalChinese\020\n*h\n\tSentiment\022\023\n\017" +
+      "STRONG_NEGATIVE\020\000\022\021\n\rWEAK_NEGATIVE\020\001\022\013\n\007" +
+      "NEUTRAL\020\002\022\021\n\rWEAK_POSITIVE\020\003\022\023\n\017STRONG_P" +
+      "OSITIVE\020\004*\223\001\n\024NaturalLogicRelation\022\017\n\013EQ" +
+      "UIVALENCE\020\000\022\026\n\022FORWARD_ENTAILMENT\020\001\022\026\n\022R" +
+      "EVERSE_ENTAILMENT\020\002\022\014\n\010NEGATION\020\003\022\017\n\013ALT" +
+      "ERNATION\020\004\022\t\n\005COVER\020\005\022\020\n\014INDEPENDENCE\020\006B" +
+      "*\n\031edu.stanford.nlp.pipelineB\rCoreNLPPro" +
+      "tos"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -102349,7 +102350,7 @@ public final class CoreNLPProtos {
     internal_static_edu_stanford_nlp_pipeline_SemgrexResponse_Match_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_edu_stanford_nlp_pipeline_SemgrexResponse_Match_descriptor,
-        new java.lang.String[] { "MatchIndex", "Node", "Reln", "Edge", "GraphIndex", "SemgrexIndex", });
+        new java.lang.String[] { "MatchIndex", "Node", "Reln", "Edge", "SentenceIndex", "SemgrexIndex", });
     internal_static_edu_stanford_nlp_pipeline_SemgrexResponse_SemgrexResult_descriptor =
       internal_static_edu_stanford_nlp_pipeline_SemgrexResponse_descriptor.getNestedTypes().get(4);
     internal_static_edu_stanford_nlp_pipeline_SemgrexResponse_SemgrexResult_fieldAccessorTable = new

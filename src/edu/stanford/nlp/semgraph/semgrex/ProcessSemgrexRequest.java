@@ -11,7 +11,10 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import edu.stanford.nlp.ling.CoreAnnotations;
@@ -38,7 +41,7 @@ public class ProcessSemgrexRequest extends ProcessProtobufRequest {
       CoreNLPProtos.SemgrexResponse.Match.Builder matchBuilder = CoreNLPProtos.SemgrexResponse.Match.newBuilder();
       matchBuilder.setMatchIndex(matcher.getMatch().index());
       matchBuilder.setSemgrexIndex(patternIdx);
-      matchBuilder.setGraphIndex(graphIdx);
+      matchBuilder.setSentenceIndex(graphIdx);
 
       // add descriptions of the named nodes
       for (String nodeName : matcher.getNodeNames()) {
@@ -80,33 +83,47 @@ public class ProcessSemgrexRequest extends ProcessProtobufRequest {
   }
 
   public static CoreNLPProtos.SemgrexResponse processRequest(List<CoreMap> sentences, List<SemgrexPattern> patterns) {
-    CoreNLPProtos.SemgrexResponse.Builder responseBuilder = CoreNLPProtos.SemgrexResponse.newBuilder();
-    List<Pair<CoreMap, List<Pair<SemgrexPattern, List<SemgrexMatch>>>>> allMatches = new ArrayList<>();
+    Map<CoreMap, Integer> sentenceIndices = new IdentityHashMap<>();
     for (CoreMap sentence : sentences) {
-      allMatches.add(new Pair<>(sentence, new ArrayList<>()));
+      sentenceIndices.put(sentence, sentenceIndices.size());
     }
+
+    Map<SemgrexPattern, Integer> semgrexIndices = new IdentityHashMap<>();
     for (SemgrexPattern pattern : patterns) {
+      semgrexIndices.put(pattern, semgrexIndices.size());
+    }
+
+    CoreNLPProtos.SemgrexResponse.Builder responseBuilder = CoreNLPProtos.SemgrexResponse.newBuilder();
+    Map<Integer, List<Pair<SemgrexPattern, List<SemgrexMatch>>>> allMatches = new LinkedHashMap<>();
+
+    for (SemgrexPattern pattern : patterns) {
+      // TODO: set this to false and only send back the matches.
+      // Better yet, can send back only the matches
       List<Pair<CoreMap, List<SemgrexMatch>>> patternMatches = pattern.matchSentences(sentences, true);
-      for (int i = 0; i < sentences.size(); ++i) {
+      for (int i = 0; i < patternMatches.size(); ++i) {
         Pair<CoreMap, List<SemgrexMatch>> sentenceMatches = patternMatches.get(i);
-        allMatches.get(i).second().add(new Pair<>(pattern, sentenceMatches.second()));
+        int sentenceIdx = sentenceIndices.get(sentenceMatches.first());
+        if (!allMatches.containsKey(sentenceIdx)) {
+          allMatches.put(sentenceIdx, new ArrayList<>());
+        }
+        allMatches.get(sentenceIdx).add(new Pair<>(pattern, sentenceMatches.second()));
       }
     }
 
-    int graphIdx = 0;
-    for (Pair<CoreMap, List<Pair<SemgrexPattern, List<SemgrexMatch>>>> sentenceMatches : allMatches) {
+    for (int sentenceIdx = 0; sentenceIdx < sentences.size(); ++sentenceIdx) {
       CoreNLPProtos.SemgrexResponse.GraphResult.Builder graphResultBuilder = CoreNLPProtos.SemgrexResponse.GraphResult.newBuilder();
 
-      int patternIdx = 0;
-      SemanticGraph graph = sentenceMatches.first().get(SemanticGraphCoreAnnotations.BasicDependenciesAnnotation.class);
-      for (Pair<SemgrexPattern, List<SemgrexMatch>> patternMatches : sentenceMatches.second()) {
-        SemgrexPattern pattern = patternMatches.first();
-        graphResultBuilder.addResult(matchSentence(pattern, graph, patternMatches.second(), patternIdx, graphIdx));
-        ++patternIdx;
+      SemanticGraph graph = sentences.get(sentenceIdx).get(SemanticGraphCoreAnnotations.BasicDependenciesAnnotation.class);
+      if (allMatches.containsKey(sentenceIdx)) {
+        List<Pair<SemgrexPattern, List<SemgrexMatch>>> sentenceMatches = allMatches.get(sentenceIdx);
+        for (Pair<SemgrexPattern, List<SemgrexMatch>> patternMatches : sentenceMatches) {
+          SemgrexPattern pattern = patternMatches.first();
+          int patternIdx = semgrexIndices.get(pattern);
+          graphResultBuilder.addResult(matchSentence(pattern, graph, patternMatches.second(), patternIdx, sentenceIdx));
+        }
       }
 
       responseBuilder.addResult(graphResultBuilder.build());
-      ++graphIdx;
     }
     return responseBuilder.build();
   }

@@ -103,8 +103,8 @@ result {
     checkResult(response, 2, 0, true);
   }
 
-  public static void checkResult(CoreNLPProtos.SemgrexResponse response, int numSemgrex, int graphIdx, boolean shouldMatch) {
-    CoreNLPProtos.SemgrexResponse.GraphResult result = response.getResultList().get(graphIdx);
+  public static void checkResult(CoreNLPProtos.SemgrexResponse response, int numSemgrex, int sentenceIdx, boolean shouldMatch) {
+    CoreNLPProtos.SemgrexResponse.GraphResult result = response.getResultList().get(sentenceIdx);
 
     Assert.assertEquals("Expected exactly " + numSemgrex + " semgrex result(s)", numSemgrex, result.getResultList().size());
 
@@ -132,7 +132,7 @@ result {
         Assert.assertEquals("Edge dobj source should be 1", 1, match.getEdgeList().get(0).getSource());
         Assert.assertEquals("Edge dobj source should be 2", 2, match.getEdgeList().get(0).getTarget());
 
-        Assert.assertEquals("Graph count was off", graphIdx, match.getGraphIndex());
+        Assert.assertEquals("Sentence idx was off", sentenceIdx, match.getSentenceIndex());
         Assert.assertEquals("Semgrex pattern count was off", semgrexIdx, match.getSemgrexIndex());
       } else {
         Assert.assertEquals("Expected exactly 0 match", 0, semgrexResult.getMatchList().size());
