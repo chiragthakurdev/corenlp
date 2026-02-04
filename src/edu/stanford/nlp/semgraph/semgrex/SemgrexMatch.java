@@ -1,6 +1,7 @@
 package edu.stanford.nlp.semgraph.semgrex;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -79,6 +80,10 @@ public class SemgrexMatch implements Serializable  {
 
   public SemanticGraphEdge getEdge(String name) {
     return namesToEdges.get(name);
+  }
+
+  public Collection<String> getVariableNames() {
+    return variableStrings.getVariableNames();
   }
 
   public String getVariableString(String var) {

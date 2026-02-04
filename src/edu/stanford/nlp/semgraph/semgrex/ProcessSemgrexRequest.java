@@ -78,6 +78,14 @@ public class ProcessSemgrexRequest extends ProcessProtobufRequest {
         matchBuilder.addEdge(edgeBuilder.build());
       }
 
+      // add descriptions of the variable strings
+      for (String var : matcher.getVariableNames()) {
+        CoreNLPProtos.SemgrexResponse.VariableString.Builder varBuilder = CoreNLPProtos.SemgrexResponse.VariableString.newBuilder();
+        varBuilder.setName(var);
+        varBuilder.setValue(matcher.getVariableString(var));
+        matchBuilder.addVarstring(varBuilder.build());
+      }
+
       semgrexResultBuilder.addMatch(matchBuilder.build());
     }
     return semgrexResultBuilder.build();

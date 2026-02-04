@@ -5,6 +5,10 @@ import edu.stanford.nlp.util.ArrayMap;
 import edu.stanford.nlp.util.MapFactory;
 import edu.stanford.nlp.util.MutableInteger;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /** A class that takes care of the stuff necessary for variable strings.
@@ -102,4 +106,18 @@ public class VariableStrings {
     return s.toString();
   }
 
+  /**
+   * Return a Collection of all the variables which are currently set
+   * (unset, null variables are skipped)
+   */
+  public Collection<String> getVariableNames() {
+    List<String> vars = new ArrayList<>();
+    for (String key : varsToStrings.keySet()) {
+      if (isSet(key)) {
+        vars.add(key);
+      }
+    }
+    Collections.sort(vars);
+    return vars;
+  }
 }
