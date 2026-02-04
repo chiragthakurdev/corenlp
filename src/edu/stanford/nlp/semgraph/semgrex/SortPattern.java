@@ -94,6 +94,10 @@ public class SortPattern extends SemgrexPattern  {
     return finalMatches;
   }
 
+  boolean isSorted() {
+    return true;
+  }
+
   @Override
   public String localString() {
     return toString(true, false);

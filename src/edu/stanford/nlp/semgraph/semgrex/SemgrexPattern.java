@@ -399,6 +399,22 @@ public abstract class SemgrexPattern implements Serializable  {
   }
 
   /**
+   * Returns true if this pattern, or any of its children, have a sort operation in them.
+   *<br>
+   * Useful for sending responses to the python client, since older python clients
+   * will expect the old layout and thus we use the old layout if the request isn't sorted.
+   * Only newer python clients will support the ::sort operator
+   */
+  boolean isSorted() {
+    for (SemgrexPattern child : getChildren()) {
+      if (child.isSorted()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * Returns a list of matching sentences and each of the matches from those sentences.
    *<br>
    * Non-matching sentences are currently not returned (may change in the future to return an empty list).

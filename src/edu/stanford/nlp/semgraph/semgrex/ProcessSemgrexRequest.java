@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
@@ -96,10 +97,22 @@ public class ProcessSemgrexRequest extends ProcessProtobufRequest {
     CoreNLPProtos.SemgrexResponse.Builder responseBuilder = CoreNLPProtos.SemgrexResponse.newBuilder();
     Map<Integer, List<Pair<SemgrexPattern, List<SemgrexMatch>>>> allMatches = new LinkedHashMap<>();
 
+    boolean isSorted = false;
     for (SemgrexPattern pattern : patterns) {
-      // TODO: set this to false and only send back the matches.
-      // Better yet, can send back only the matches
-      List<Pair<CoreMap, List<SemgrexMatch>>> patternMatches = pattern.matchSentences(sentences, true);
+      if (pattern.isSorted()) {
+        isSorted = true;
+        break;
+      }
+    }
+
+    for (SemgrexPattern pattern : patterns) {
+      List<Pair<CoreMap, List<SemgrexMatch>>> patternMatches;
+      if (isSorted) {
+        patternMatches = pattern.matchSentences(sentences, false);
+      } else {
+        patternMatches = pattern.matchSentences(sentences, true);
+      }
+
       for (int i = 0; i < patternMatches.size(); ++i) {
         Pair<CoreMap, List<SemgrexMatch>> sentenceMatches = patternMatches.get(i);
         int sentenceIdx = sentenceIndices.get(sentenceMatches.first());
@@ -110,7 +123,15 @@ public class ProcessSemgrexRequest extends ProcessProtobufRequest {
       }
     }
 
-    for (int sentenceIdx = 0; sentenceIdx < sentences.size(); ++sentenceIdx) {
+    Iterable<Integer> sentenceIterable;
+    if (isSorted) {
+      sentenceIterable = allMatches.keySet();
+    } else {
+      IntStream range = IntStream.range(0, sentences.size());
+      sentenceIterable = () -> range.iterator();
+    }
+
+    for (int sentenceIdx : sentenceIterable) {
       CoreNLPProtos.SemgrexResponse.GraphResult.Builder graphResultBuilder = CoreNLPProtos.SemgrexResponse.GraphResult.newBuilder();
 
       SemanticGraph graph = sentences.get(sentenceIdx).get(SemanticGraphCoreAnnotations.BasicDependenciesAnnotation.class);
