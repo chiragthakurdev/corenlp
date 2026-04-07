@@ -15,6 +15,9 @@ import edu.stanford.nlp.util.VariableStrings;
  * A root level pattern for storing final information about the SemgrexPattern,
  * such as the known edge names used in the pattern
  *
+ * TODO: reassess if it would actually be more useful to just keep
+ * this information in the children
+ *
  * @author John Bauer
  */
 public class RootPattern extends SemgrexPattern  {
