@@ -183,6 +183,29 @@ public class SsurgeonTest {
   }
 
   /**
+   * Test that trying to relabel an unknown edge throws an exception
+   */
+  @Test
+  public void readXMLRelabelEdgeUnknown() {
+    String doc = String.join(newline,
+                             "<ssurgeon-pattern-list>",
+                             "  <ssurgeon-pattern>",
+                             "    <uid>38</uid>",
+                             "    <notes>This is a simple test of RelabelNamedEdge</notes>",
+                             "    <semgrex>" + XMLUtils.escapeXML("{}=a1 >obj=foo {}=a2") + "</semgrex>",
+                             "    <edit-list>relabelNamedEdge -edge zzz -reln dep</edit-list>",
+                             "  </ssurgeon-pattern>",
+                             "</ssurgeon-pattern-list>");
+    Ssurgeon inst = Ssurgeon.inst();
+    try {
+      List<SsurgeonPattern> patterns = inst.readFromString(doc);
+      throw new AssertionError("Expected a failure because of unknown edges");
+    } catch (SsurgeonParseException e) {
+      // yay
+    }
+  }
+
+  /**
    * Test a few various relabel edge operations
    */
   @Test
@@ -2027,6 +2050,29 @@ public class SsurgeonTest {
       List<SsurgeonPattern> patterns = inst.readFromString(add);
       throw new AssertionError("Expected a parse exception!");
     } catch(SsurgeonParseException e) {
+      // yay
+    }
+  }
+
+  /**
+   * Test that trying to reattach an unknown edge throws an exception
+   */
+  @Test
+  public void readXMLRettachEdgeUnknown() {
+    String doc = String.join(newline,
+                             "<ssurgeon-pattern-list>",
+                             "  <ssurgeon-pattern>",
+                             "    <uid>38</uid>",
+                             "    <notes>This is a simple test of RettachNamedEdge</notes>",
+                             "    <semgrex>" + XMLUtils.escapeXML("{}=a1 >obj=foo {}=a2") + "</semgrex>",
+                             "    <edit-list>reattachNamedEdge -edge zzz -gov a1</edit-list>",
+                             "  </ssurgeon-pattern>",
+                             "</ssurgeon-pattern-list>");
+    Ssurgeon inst = Ssurgeon.inst();
+    try {
+      List<SsurgeonPattern> patterns = inst.readFromString(doc);
+      throw new AssertionError("Expected a failure because of unknown edges");
+    } catch (SsurgeonParseException e) {
       // yay
     }
   }

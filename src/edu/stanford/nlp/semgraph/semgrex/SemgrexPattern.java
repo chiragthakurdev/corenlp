@@ -296,6 +296,10 @@ public abstract class SemgrexPattern implements Serializable  {
     return opt;
   }
 
+  public Set<String> getKnownEdges() {
+    throw new UnsupportedOperationException("Only the RootPattern knows about the full set of known edges");
+  }
+
   // matcher methods
   // ------------------------------------------------------------
 

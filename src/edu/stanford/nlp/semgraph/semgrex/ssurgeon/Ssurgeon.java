@@ -591,7 +591,7 @@ public class Ssurgeon  {
   /**
    * Given a string entry, converts it into a SsurgeonEdit object.
    */
-  public static SsurgeonEdit parseEditLine(String editLine, Map<String, String> attributeArgs, Language language) {
+  public static SsurgeonEdit parseEditLine(String editLine, Map<String, String> attributeArgs, Language language, SemgrexPattern semgrexPattern) {
     try {
       // Extract the operation name first
       final String[] tuples1 = editLine.split("\\s+", 2);
@@ -626,7 +626,13 @@ public class Ssurgeon  {
         GrammaticalRelation reln = GrammaticalRelation.valueOf(language, argsBox.reln);
         return new AddEdge(argsBox.govNodeName, argsBox.dep, reln, argsBox.weight);
       } else if (command.equalsIgnoreCase(ReattachNamedEdge.LABEL)) {
-          return new ReattachNamedEdge(argsBox.edge, argsBox.govNodeName, argsBox.dep);
+        if (argsBox.edge == null) {
+          throw new SsurgeonParseException("Edge not specified for ReattachNamedEdge");
+        }
+        if (!semgrexPattern.getKnownEdges().contains(argsBox.edge)) {
+          throw new SsurgeonParseException("Edge requested for ReattachNamedEdge is not known to the SemgrexPattern");
+        }
+        return new ReattachNamedEdge(argsBox.edge, argsBox.govNodeName, argsBox.dep);
       } else if (command.equalsIgnoreCase(DeleteGraphFromNode.LABEL)) {
         if (argsBox.nodes.size() != 1) {
           throw new SsurgeonParseException("Cannot make a DeleteGraphFromNode out of " + argsBox.nodes.size() + " nodes");
@@ -653,8 +659,14 @@ public class Ssurgeon  {
         }
         return new MergeNodes(argsBox.nodes, argsBox.annotations);
       } else if (command.equalsIgnoreCase(RelabelNamedEdge.LABEL)) {
+        if (argsBox.edge == null) {
+          throw new SsurgeonParseException("Edge not specified for RelabelNamedEdge");
+        }
+        if (!semgrexPattern.getKnownEdges().contains(argsBox.edge)) {
+          throw new SsurgeonParseException("Edge requested for RelabelNamedEdge is not known to the SemgrexPattern");
+        }
         if (argsBox.reln == null) {
-          throw new SsurgeonParseException("Relation not specified for AddEdge");
+          throw new SsurgeonParseException("Relation not specified for RelabelNamedEdge");
         }
         GrammaticalRelation reln = GrammaticalRelation.valueOf(language, argsBox.reln);
         return new RelabelNamedEdge(argsBox.edge, reln);
@@ -904,7 +916,7 @@ public class Ssurgeon  {
 
         Element editElt = (Element) node;
         String editVal = getEltText(editElt);
-        retPattern.addEdit(Ssurgeon.parseEditLine(editVal, attributeArgs, retPattern.getLanguage()));
+        retPattern.addEdit(Ssurgeon.parseEditLine(editVal, attributeArgs, retPattern.getLanguage(), semgrexPattern));
       }
     }
 

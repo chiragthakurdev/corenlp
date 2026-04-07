@@ -146,7 +146,7 @@ SemgrexPattern Root() : {
     "\n"
   )
   {
-    return node;
+    return new RootPattern(node, knownEdges);
   }
 
 }
