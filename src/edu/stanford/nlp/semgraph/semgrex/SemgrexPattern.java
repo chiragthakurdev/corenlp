@@ -368,6 +368,7 @@ public abstract class SemgrexPattern implements Serializable  {
    * Postprocess a set of results from the batch processing method
    *
    * TODO: make abstract
+   * TODO: neither SortPattern nor UniqPattern operate recursively, seems like a bug
    */
   public List<Pair<CoreMap, List<SemgrexMatch>>> postprocessMatches(List<Pair<CoreMap, List<SemgrexMatch>>> matches, boolean keepEmptyMatches) {
     return matches;
