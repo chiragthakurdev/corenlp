@@ -591,7 +591,7 @@ public class Ssurgeon  {
   /**
    * Given a string entry, converts it into a SsurgeonEdit object.
    */
-  public static SsurgeonEdit parseEditLine(String editLine, Map<String, String> attributeArgs, Language language, SemgrexPattern semgrexPattern) {
+  public static SsurgeonEdit parseEditLine(String editLine, Map<String, String> attributeArgs, Language language, Set<String> knownEdges) {
     try {
       // Extract the operation name first
       final String[] tuples1 = editLine.split("\\s+", 2);
@@ -624,12 +624,15 @@ public class Ssurgeon  {
           throw new SsurgeonParseException("Relation not specified for AddEdge");
         }
         GrammaticalRelation reln = GrammaticalRelation.valueOf(language, argsBox.reln);
-        return new AddEdge(argsBox.govNodeName, argsBox.dep, reln, argsBox.weight);
+        if (argsBox.edge != null) {
+          knownEdges.add(argsBox.edge);
+        }
+        return new AddEdge(argsBox.govNodeName, argsBox.dep, reln, argsBox.weight, argsBox.edge);
       } else if (command.equalsIgnoreCase(ReattachNamedEdge.LABEL)) {
         if (argsBox.edge == null) {
           throw new SsurgeonParseException("Edge not specified for ReattachNamedEdge");
         }
-        if (!semgrexPattern.getKnownEdges().contains(argsBox.edge)) {
+        if (!knownEdges.contains(argsBox.edge)) {
           throw new SsurgeonParseException("Edge requested for ReattachNamedEdge is not known to the SemgrexPattern");
         }
         return new ReattachNamedEdge(argsBox.edge, argsBox.govNodeName, argsBox.dep);
@@ -662,7 +665,7 @@ public class Ssurgeon  {
         if (argsBox.edge == null) {
           throw new SsurgeonParseException("Edge not specified for RelabelNamedEdge");
         }
-        if (!semgrexPattern.getKnownEdges().contains(argsBox.edge)) {
+        if (!knownEdges.contains(argsBox.edge)) {
           throw new SsurgeonParseException("Edge requested for RelabelNamedEdge is not known to the SemgrexPattern");
         }
         if (argsBox.reln == null) {
@@ -896,6 +899,8 @@ public class Ssurgeon  {
       retPattern.setLanguage(language);
     }
 
+    Set<String> knownEdges = new HashSet<>(semgrexPattern.getKnownEdges());
+
     NodeList editNodes = elt.getElementsByTagName(SsurgeonPattern.EDIT_LIST_ELEM_TAG);
     for (int i=0; i<editNodes.getLength(); i++) {
       Node node = editNodes.item(i);
@@ -916,7 +921,7 @@ public class Ssurgeon  {
 
         Element editElt = (Element) node;
         String editVal = getEltText(editElt);
-        retPattern.addEdit(Ssurgeon.parseEditLine(editVal, attributeArgs, retPattern.getLanguage(), semgrexPattern));
+        retPattern.addEdit(Ssurgeon.parseEditLine(editVal, attributeArgs, retPattern.getLanguage(), knownEdges));
       }
     }
 
