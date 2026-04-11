@@ -132,6 +132,9 @@ public class SplitWord extends SsurgeonEdit {
   @Override
   public boolean evaluate(SemanticGraph sg, SemgrexMatcher sm) {
     IndexedWord matchedNode = sm.getNode(node);
+    if (matchedNode == null) {
+      return false;
+    }
     String origWord = matchedNode.word();
 
     // first, iterate over the regex patterns we had at creation time
