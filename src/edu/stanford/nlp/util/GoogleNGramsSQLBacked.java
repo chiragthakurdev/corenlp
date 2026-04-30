@@ -118,6 +118,9 @@ public class GoogleNGramsSQLBacked  {
     String query = "";
     for(String str: strs) {
       str = str.trim();
+      if(str.contains("'")){
+        str = StringUtils.escapeString(str, new char[]{'\''},'\'');
+      }
       int ngram = str.split("\\s+").length;
       String table = tablenamePrefix + ngram;
       if (!existsTable(table)){
