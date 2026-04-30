@@ -25,7 +25,7 @@ public class RootPattern extends SemgrexPattern  {
   final Set<String> knownEdges;
 
   public List<SemgrexPattern> getChildren() {
-    return child.getChildren();
+    return Collections.singletonList(child);
   }
 
   public Set<String> getKnownEdges() {
