@@ -69,8 +69,9 @@ SPECIAL_TOKEN:
 
 TOKEN:
 {
-        < UNIQ: "uniq" >
-|       < SORT: "sort" >
+        < UNIQ:  "uniq" >
+|       < SORT:  "sort" >
+|       < RSORT: "rsort" >
 }
 
 TOKEN:
@@ -121,7 +122,7 @@ SemgrexPattern Root() : {
   )
   (
     (
-      "::" (postprocess = <UNIQ> | postprocess = <SORT>) { postprocessKeys = new ArrayList<>(); }  (nextIdentifier = identifier() { postprocessKeys.add(nextIdentifier.image); })*
+      "::" (postprocess = <UNIQ> | postprocess = <SORT> | postprocess = <RSORT>) { postprocessKeys = new ArrayList<>(); }  (nextIdentifier = identifier() { postprocessKeys.add(nextIdentifier.image); })*
       {
         for (String key : postprocessKeys) {
           if (!knownVariables.contains(key) && !knownVarGroups.contains(key) && !knownEdges.contains(key)) {
@@ -137,7 +138,9 @@ SemgrexPattern Root() : {
         if (postprocess.image.equals("uniq")) {
           node = new UniqPattern(node, postprocessKeys);
         } else if (postprocess.image.equals("sort")) {
-          node = new SortPattern(node, postprocessKeys);
+          node = new SortPattern(node, postprocessKeys, false);
+        } else if (postprocess.image.equals("rsort")) {
+          node = new SortPattern(node, postprocessKeys, true);
         }
       }
     )?
